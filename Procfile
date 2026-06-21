@@ -1,0 +1,1 @@
+web: gunicorn nnova.wsgi:application
