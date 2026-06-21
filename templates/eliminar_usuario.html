@@ -2,18 +2,85 @@
 
 {% block content %}
 
-<h2>Eliminar usuario</h2>
+<style>
+.delete-container {
+    max-width: 450px;
+    margin: 70px auto;
+    background: var(--bg-card);
+    padding: 35px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+}
 
-<p>¿Seguro que quieres eliminar a <strong>{{ usuario.username }}</strong>?</p>
+.delete-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
 
-<form method="post">
-    {% csrf_token %}
-    <button class="btn-cancelar">Sí, eliminar</button>
-    <br><br>
-</form>
+.delete-text {
+    margin-bottom: 25px;
+    color: var(--text);
+}
 
-<a href="{% url 'lista_usuarios' %}">
-    <button>Cancelar</button>
-</a>
+.btn-danger {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: 0.2s ease;
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.btn-secondary {
+    display: block;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--bg);
+}
+</style>
+
+<div class="delete-container">
+
+    <div class="delete-title">
+        ⚠️ Eliminar usuario
+    </div>
+
+    <p class="delete-text">
+        ¿Seguro que quieres eliminar a <strong>{{ usuario.username }}</strong>?
+        <br>
+        Esta acción no se puede deshacer.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger">
+            Sí, eliminar
+        </button>
+    </form>
+
+    <a href="{% url 'lista_usuarios' %}" class="btn-secondary">
+        Cancelar
+    </a>
+
+</div>
 
 {% endblock %}

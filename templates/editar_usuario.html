@@ -2,23 +2,109 @@
 
 {% block content %}
 
-<h2>Editar usuario</h2>
+<style>
+.form-container {
+    max-width: 520px;
+    margin: 50px auto;
+    background: var(--bg-card);
+    padding: 35px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+}
 
-<form method="post">
-    {% csrf_token %}
+.form-title {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 22px;
+    font-weight: 600;
+}
 
-    <input type="text" name="username" value="{{ usuario.username }}" required>
-    <input type="email" name="email" value="{{ usuario.email }}" required>
+.input-group {
+    margin-bottom: 16px;
+}
 
-    <select name="rol">
-        <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Admin</option>
-        <option value="docente" {% if usuario.rol == 'docente' %}selected{% endif %}>Docente</option>
-        <option value="estudiante" {% if usuario.rol == 'estudiante' %}selected{% endif %}>Estudiante</option>
-    </select>
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: 0.2s ease;
+}
 
-    <input type="password" name="password" placeholder="Nueva contraseña (opcional)">
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+}
 
-    <button>Guardar cambios</button>
-</form>
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.back-link {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    color: var(--primary);
+    text-decoration: none;
+}
+</style>
+
+<div class="form-container">
+
+    <div class="form-title">
+        ✏️ Editar usuario
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <input type="text" name="username" value="{{ usuario.username }}" required>
+        </div>
+
+        <div class="input-group">
+            <input type="email" name="email" value="{{ usuario.email }}" required>
+        </div>
+
+        <div class="input-group">
+            <select name="rol">
+                <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Administrador</option>
+                <option value="docente" {% if usuario.rol == 'docente' %}selected{% endif %}>Docente</option>
+                <option value="estudiante" {% if usuario.rol == 'estudiante' %}selected{% endif %}>Estudiante</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <input type="password" name="password" placeholder="Nueva contraseña (opcional)">
+        </div>
+
+        <button type="submit" class="btn-primary">
+            Guardar cambios
+        </button>
+    </form>
+
+    <a href="{% url 'lista_usuarios' %}" class="back-link">
+        ← Volver al listado
+    </a>
+
+</div>
 
 {% endblock %}
