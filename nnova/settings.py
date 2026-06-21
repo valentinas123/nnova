@@ -9,10 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-n7(@c@$+&ue8t&6@7jirq5ie)a)ep@d0ema=vjzjfzmc@1+6+v'
 
-# Detectar si estamos en Railway (producción) o local
+# 🔥 PRODUCCIÓN / LOCAL DETECCIÓN
 IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None or os.environ.get('PORT') is not None
 
-DEBUG = True
+DEBUG = not IS_RAILWAY
 
 ALLOWED_HOSTS = [
     "web-production-41465.up.railway.app",
@@ -62,59 +62,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'nnova.wsgi.application'
 
 
-# 🟡 BASE DE DATOS
-# En Railway: usa PostgreSQL (persistente) via DATABASE_URL
-# En local: usa SQLite
+# 🟢 DATABASE (Railway = Postgres automático si existe DATABASE_URL)
 DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
         conn_max_age=600,
-        conn_health_checks=True,
     )
 }
 
-
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-    {'NAME': 'usuarios.validators.ComplejidadPasswordValidator'},
-]
-
-LANGUAGE_CODE = 'es'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
+AUTH_USER_MODEL = 'usuarios.Usuario'
+LOGIN_REDIRECT_URL = '/app/'
+LOGIN_URL = '/login/'
 
 
-# 🟢 STATIC FILES
+# 🟢 STATIC
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
 
-# 🟢 AUTH
-AUTH_USER_MODEL = 'usuarios.Usuario'
-LOGIN_REDIRECT_URL = '/app/'
-LOGIN_URL = '/login/'
-
-
 # 🟢 MEDIA
 MEDIA_URL = '/media/'
-if IS_RAILWAY:
-    MEDIA_ROOT = '/app/media'  # Volumen persistente de Railway
-else:
-    MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 
@@ -127,15 +102,12 @@ EMAIL_HOST_USER = 'valentina10solano@gmail.com'
 EMAIL_HOST_PASSWORD = 'dzlomnwbjullvmpw'
 
 
-# 🔵 CSRF — Railway usa HTTPS con proxy
+# 🔵 CSRF RAILWAY FIX REAL
 CSRF_TRUSTED_ORIGINS = [
-    "https://web-production-41465.up.railway.app",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
+    "https://web-production-41465.up.railway.app"
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# 🔒 Cookies seguras solo en producción (Railway usa HTTPS)
 SESSION_COOKIE_SECURE = IS_RAILWAY
 CSRF_COOKIE_SECURE = IS_RAILWAY
