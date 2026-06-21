@@ -22,8 +22,8 @@ from datetime import datetime
 from io import TextIOWrapper
 
 from django.contrib import messages
-#from django.core.mail import send_mail
-#from django.conf import settings
+from django.core.mail import send_mail
+from django.conf import settings
 
 # ===================== ESTUDIANTE =====================
 
@@ -182,44 +182,30 @@ def logout_usuario(request):
 @login_required
 def contacto(request):
     if request.method == 'POST':
-        mensaje = request.POST.get('mensaje')
+        mensaje = request.POST.get('mensaje', '').strip()
 
-        send_mail(
-            subject=f"Mensaje de {request.user.username}",
-            message=mensaje,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[settings.EMAIL_HOST_USER],  # te llega a ti
-        )
+        if not mensaje:
+            messages.error(request, "El mensaje no puede estar vacío")
+            return redirect('contacto')
 
-        messages.success(request, "Mensaje enviado correctamente")
+        try:
+            send_mail(
+                subject=f"Mensaje de {request.user.username}",
+                message=mensaje,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=["valentina10solano@gmail.com"],
+                fail_silently=False,
+            )
+            messages.success(request, "Mensaje enviado correctamente")
+
+        except Exception:
+            messages.error(request, "No se pudo enviar el mensaje")
 
         return redirect('contacto')
 
     return render(request, 'contacto.html')
 
-# ===================== NUEVA VISTA: SOLICITAR DOCENTE =====================
 
-@login_required
-def solicitar_docente(request):
-    """Permite a un estudiante enviar una solicitud por email para ser docente.
-    El email se envía a la dirección configurada en settings (valentina10solano@gmail.com).
-    """
-    if request.method == 'POST':
-        # Enviar email al admin con nombre de usuario y enlace al admin para aprobar
-        subject = f"Solicitud de profesor: {request.user.username}"
-        message = (
-            f"El usuario {request.user.username} ({request.user.email}) ha solicitado ser docente.\n"
-            f"Visita el panel de administración para aprobarlo: {request.build_absolute_uri('/') }admin/"
-        )
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[settings.EMAIL_HOST_USER],
-        )
-        messages.success(request, "Solicitud enviada al administrador.")
-        return redirect('inicio')
-    return render(request, 'solicitar_docente.html')
 
 # ===================== DOCENTE =====================
 

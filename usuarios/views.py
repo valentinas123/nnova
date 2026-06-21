@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.core.mail import EmailMessage
 from django.conf import settings
 from django.contrib import messages
 from .models import Usuario
@@ -108,34 +109,47 @@ def registro(request):
     return render(request, 'registro.html')
 
 
+@login_required
 def solicitar_docente(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre', '').strip()
         email = request.POST.get('email', '').strip()
         mensaje = request.POST.get('mensaje', '').strip()
-        
-        from django.core.mail import EmailMessage
-        subject = f"Solicitud de docente: {nombre}"
-        body = f"Nombre: {nombre}\nCorreo: {email}\nMensaje:\n{mensaje}"
-        
+        archivo = request.FILES.get('hoja_vida')
+
+        if not nombre or not email:
+            messages.error(request, "Nombre y correo son obligatorios")
+            return redirect('solicitar_docente')
+
         try:
             email_msg = EmailMessage(
-                subject=subject,
-                body=body,
+                subject=f"Solicitud de docente: {nombre}",
+                body=f"""
+Nombre: {nombre}
+Correo: {email}
+
+Mensaje:
+{mensaje}
+""",
                 from_email=settings.EMAIL_HOST_USER,
-                to=['valentina10solano@gmail.com'],
+                to=["valentina10solano@gmail.com"],
             )
-            
-            # Adjuntar hoja de vida si existe
-            if request.FILES.get('hoja_vida'):
-                hoja_vida = request.FILES['hoja_vida']
-                email_msg.attach(hoja_vida.name, hoja_vida.read(), hoja_vida.content_type)
-                
+
+            # adjunto seguro
+            if archivo:
+                email_msg.attach(
+                    archivo.name,
+                    archivo.read(),
+                    archivo.content_type
+                )
+
             email_msg.send(fail_silently=False)
-            messages.success(request, 'Tu solicitud y hoja de vida han sido enviadas correctamente.')
-        except Exception as e:
-            messages.error(request, f'No se pudo enviar la solicitud por correo: {str(e)}')
-            
-        return redirect('inicio_publico')
-    
-    return redirect('inicio_publico')
+
+            messages.success(request, "Solicitud enviada correctamente")
+
+        except Exception:
+            messages.error(request, "Error al enviar la solicitud")
+
+        return redirect('inicio')
+
+    return render(request, 'solicitar_docente.html')
