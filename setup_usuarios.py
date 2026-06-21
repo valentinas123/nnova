@@ -1,0 +1,82 @@
+"""
+Script para crear/restaurar usuarios del sistema nnova.
+Se ejecuta automáticamente en el Procfile de Railway.
+Es idempotente: no duplica usuarios, solo los crea si no existen o actualiza sus datos.
+"""
+import os
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nnova.settings')
+django.setup()
+
+from usuarios.models import Usuario
+
+USUARIOS = [
+    {
+        'username': 'admin',
+        'password': 'AdminPass123',
+        'rol': 'admin',
+        'is_staff': True,
+        'is_superuser': True,
+        'email': 'admin@nnova.com',
+        'first_name': 'Administrador',
+        'last_name': '',
+    },
+    {
+        'username': 'docente1',
+        'password': 'DocentePass123',
+        'rol': 'docente',
+        'is_staff': False,
+        'is_superuser': False,
+        'email': 'docente1@nnova.com',
+        'first_name': 'Docente',
+        'last_name': 'Uno',
+    },
+    {
+        'username': 'docente2',
+        'password': 'DocentePass123',
+        'rol': 'docente',
+        'is_staff': False,
+        'is_superuser': False,
+        'email': 'docente2@nnova.com',
+        'first_name': 'Docente',
+        'last_name': 'Dos',
+    },
+    {
+        'username': 'estudiante1',
+        'password': 'EstudiantePass123',
+        'rol': 'estudiante',
+        'is_staff': False,
+        'is_superuser': False,
+        'email': 'estudiante1@nnova.com',
+        'first_name': 'Estudiante',
+        'last_name': 'Uno',
+    },
+    {
+        'username': 'estudiante2',
+        'password': 'EstudiantePass123',
+        'rol': 'estudiante',
+        'is_staff': False,
+        'is_superuser': False,
+        'email': 'estudiante2@nnova.com',
+        'first_name': 'Estudiante',
+        'last_name': 'Dos',
+    },
+]
+
+print("[setup_usuarios] Verificando usuarios del sistema...")
+
+for data in USUARIOS:
+    password = data.pop('password')
+    username = data['username']
+
+    usuario, created = Usuario.objects.get_or_create(username=username)
+    for campo, valor in data.items():
+        setattr(usuario, campo, valor)
+    usuario.set_password(password)
+    usuario.save()
+
+    accion = "CREADO" if created else "OK"
+    print(f"  [{accion}] {username} | rol={usuario.rol}")
+
+print("[setup_usuarios] Listo.")

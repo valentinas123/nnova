@@ -1,1 +1,1 @@
-web: gunicorn nnova.wsgi:application --bind 0.0.0.0:$PORT
+web: python manage.py migrate --noinput && python manage.py collectstatic --noinput && python setup_usuarios.py && gunicorn nnova.wsgi:application --bind 0.0.0.0:$PORT

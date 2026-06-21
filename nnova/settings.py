@@ -8,11 +8,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-n7(@c@$+&ue8t&6@7jirq5ie)a)ep@d0ema=vjzjfzmc@1+6+v'
 
-DEBUG = False
+# Detectar si estamos en Railway (producción) o local
+IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None or os.environ.get('PORT') is not None
 
-# 🔵 PRODUCCIÓN (Railway)
+DEBUG = not IS_RAILWAY
+
 ALLOWED_HOSTS = [
     "web-production-41465.up.railway.app",
+    "localhost",
+    "127.0.0.1",
 ]
 
 INSTALLED_APPS = [
@@ -57,7 +61,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'nnova.wsgi.application'
 
 
-# 🟡 BASE DE DATOS
+# 🟡 BASE DE DATOS (SQLite — tanto local como Railway)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -97,7 +101,7 @@ STORAGES = {
 
 # 🟢 AUTH
 AUTH_USER_MODEL = 'usuarios.Usuario'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/app/'
 LOGIN_URL = '/login/'
 
 
@@ -116,13 +120,15 @@ EMAIL_HOST_USER = 'valentina10solano@gmail.com'
 EMAIL_HOST_PASSWORD = 'dzlomnwbjullvmpw'
 
 
-# 🔵 CSRF RAILWAY (CORREGIDO)
+# 🔵 CSRF — Railway usa HTTPS con proxy
 CSRF_TRUSTED_ORIGINS = [
-    "https://web-production-41465.up.railway.app"
+    "https://web-production-41465.up.railway.app",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# 🔒 SEGURIDAD PRODUCCIÓN
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# 🔒 Cookies seguras solo en producción (Railway usa HTTPS)
+SESSION_COOKIE_SECURE = IS_RAILWAY
+CSRF_COOKIE_SECURE = IS_RAILWAY

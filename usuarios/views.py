@@ -49,17 +49,6 @@ def login_usuario(request):
     return render(request, 'login.html')
 
 
-@login_required
-def panel_docente(request):
-    if request.user.rol != 'docente':
-        return redirect('inicio')
-
-
-@login_required
-def panel_admin(request):
-    if request.user.rol != 'admin':
-        return redirect('inicio')
-
 
 def registro(request):
     if request.method == 'POST':
