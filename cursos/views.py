@@ -24,6 +24,7 @@ from io import TextIOWrapper
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
+import threading
 
 # ===================== ESTUDIANTE =====================
 
@@ -182,8 +183,9 @@ def logout_usuario(request):
 def contacto(request):
     if request.method == 'POST':
         mensaje = request.POST.get('mensaje', '')
-
-        try:
+        
+        # Creamos una función interna con la tarea pesada
+        def enviar_email_bg():
             send_mail(
                 subject=f"Mensaje de contacto: {request.user.username if request.user.is_authenticated else 'Invitado'}",
                 message=mensaje,
@@ -191,12 +193,13 @@ def contacto(request):
                 recipient_list=[settings.EMAIL_HOST_USER],
                 fail_silently=True
             )
-            messages.success(request, "✅ Mensaje enviado correctamente")
-        except Exception:
-            messages.error(request, "❌ No se pudo enviar el mensaje")
 
+        # 🚀 Se ejecuta en segundo plano de inmediato sin congelar la página
+        threading.Thread(target=enviar_email_bg).start()
+        
+        messages.success(request, "✅ Mensaje enviado correctamente")
         return redirect('contacto')
-
+        
     return render(request, 'contacto.html')
 
 

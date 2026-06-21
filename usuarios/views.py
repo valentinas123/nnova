@@ -8,6 +8,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.contrib import messages
 from .models import Usuario
+import threading
 
 
 def inicio_publico(request):
@@ -114,26 +115,23 @@ def solicitar_docente(request):
         nombre = request.POST.get('nombre', '')
         email = request.POST.get('email', '')
         mensaje = request.POST.get('mensaje', '')
-
-        try:
-            email_msg = EmailMessage(
-                subject=f"Solicitud docente: {nombre}",
-                body=f"Nombre: {nombre}\nEmail: {email}\nMensaje:\n{mensaje}",
-                from_email=settings.EMAIL_HOST_USER,
-                to=[settings.EMAIL_HOST_USER],
-            )
-
-            if request.FILES.get('hoja_vida'):
-                file = request.FILES['hoja_vida']
-                email_msg.attach(file.name, file.read(), file.content_type)
-
-            email_msg.send(fail_silently=True)
-
-            messages.success(request, "✅ Solicitud enviada correctamente")
-
-        except Exception:
-            messages.error(request, "❌ No se pudo enviar la solicitud")
-
-        return redirect('inicio')
-
+        
+        email_msg = EmailMessage(
+            subject=f"Solicitud docente: {nombre}",
+            body=f"Nombre: {nombre}\nEmail: {email}\nMensaje:\n{mensaje}",
+            from_email=settings.EMAIL_HOST_USER,
+            to=[settings.EMAIL_HOST_USER],
+        )
+        
+        if request.FILES.get('hoja_vida'):
+            file = request.FILES['hoja_vida']
+            # Leemos el archivo antes de pasarlo al hilo secundario
+            email_msg.attach(file.name, file.read(), file.content_type)
+        
+        # 🚀 Enviamos en segundo plano para no saturar a Gunicorn
+        threading.Thread(target=email_msg.send, kwargs={'fail_silently': True}).start()
+        
+        messages.success(request, "✅ Solicitud enviada correctamente")
+        return redirect('inicio')  # Asegúrate de que 'inicio' sea el nombre correcto de tu URL
+        
     return render(request, 'solicitar_docente.html')
