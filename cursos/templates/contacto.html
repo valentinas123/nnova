@@ -4,8 +4,8 @@
 <div style="max-width: 500px; margin: auto; padding: 20px;">
     <h2>Contacto</h2>
     
-    <!-- 🚀 Forzamos HTTPS y la barra diagonal exacta para que no se pierdan los datos -->
-    <form method="post" action="https://railway.app">
+    <!-- 🚀 Volvemos a la etiqueta dinámica oficial de Django -->
+    <form method="post" action="{% url 'contacto' %}">
         {% csrf_token %}
         
         <textarea name="mensaje" placeholder="Escribe tu mensaje..." style="width: 100%; height: 150px; padding: 10px; box-sizing: border-box;" required></textarea>

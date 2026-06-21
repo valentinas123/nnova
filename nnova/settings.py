@@ -4,18 +4,15 @@ import os
 import dj_database_url
 
 mimetypes.add_type("text/css", ".css", True)
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 🔐 SECRET KEY
+# 🔑 SECRET KEY
 SECRET_KEY = os.environ.get(
-    "SECRET_KEY",
-    "django-insecure-fallback-key-change-me"
+    "SECRET_KEY", "django-insecure-fallback-key-change-me"
 )
 
 # 🚀 DETECCIÓN DE ENTORNO
 IS_RAILWAY = bool(os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('PORT'))
-
 DEBUG = not IS_RAILWAY
 
 ALLOWED_HOSTS = [
@@ -86,7 +83,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# 🔥 STORAGES (CORREGIDO COMPLETO)
+# 🔥 STORAGES
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -103,26 +100,19 @@ os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # 📧 EMAIL CONFIG (SEGURO + RAILWAY READY)
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
-# 🔒 SECURITY (RAILWAY)
+# 🔒 SECURITY (RAILWAY PROXIED)
 CSRF_TRUSTED_ORIGINS = [
     "https://web-production-41465.up.railway.app"
 ]
-
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
 SESSION_COOKIE_SECURE = IS_RAILWAY
 CSRF_COOKIE_SECURE = IS_RAILWAY
 
-# 🧠 EXTRA SEGURIDAD (evita errores raros en producción)
-if IS_RAILWAY:
-    SECURE_SSL_REDIRECT = True
-else:
-    SECURE_SSL_REDIRECT = False
+# 🧠 CRÍTICO: Desactivamos la redirección interna de Django para evitar bucles en Railway
+SECURE_SSL_REDIRECT = False
