@@ -3,8 +3,13 @@ from django.db import models
 
 class Usuario(AbstractUser):
     ROLES = (
-        ('estudiante', 'Estudiante'),
+        ('admin', 'Administrador'),
         ('docente', 'Docente'),
+        ('estudiante', 'Estudiante'),
     )
 
-    rol = models.CharField(max_length=20, choices=ROLES, default='estudiante')
+    rol = models.CharField(
+        max_length=20,
+        choices=ROLES,
+        default='estudiante'
+    )
