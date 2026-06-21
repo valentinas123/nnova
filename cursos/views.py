@@ -559,6 +559,7 @@ def crear_usuario(request):
         if not username:
             messages.error(request, "El nombre de usuario es obligatorio")
             return redirect('crear_usuario')
+
         if Usuario.objects.filter(username=username).exists():
             messages.error(request, "El nombre de usuario ya existe")
             return redirect('crear_usuario')
@@ -571,6 +572,7 @@ def crear_usuario(request):
         if not email:
             messages.error(request, "El correo electrónico es obligatorio")
             return redirect('crear_usuario')
+
         try:
             validate_email(email)
         except ValidationError:
@@ -585,13 +587,14 @@ def crear_usuario(request):
         if not password:
             messages.error(request, "La contraseña es obligatoria")
             return redirect('crear_usuario')
+
         try:
             validate_password(password)
         except ValidationError as e:
             messages.error(request, e.messages[0])
             return redirect('crear_usuario')
 
-        # CREACIÓN
+        # CREACIÓN DEL USUARIO
         usuario = Usuario.objects.create(
             username=username,
             email=email,
@@ -599,14 +602,17 @@ def crear_usuario(request):
             password=make_password(password)
         )
 
-        # 📧 correo (consola)
-        send_mail(
-            'Bienvenido',
-            f'Hola {usuario.username}, tu cuenta fue creada.',
-            'no-reply@nnova.com',
-            [usuario.email],
-            fail_silently=True,
-        )
+        # ENVÍO DE CORREO (opcional)
+        try:
+            send_mail(
+                'Bienvenido',
+                f'Hola {usuario.username}, tu cuenta fue creada correctamente.',
+                settings.EMAIL_HOST_USER,
+                [usuario.email],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
 
         messages.success(request, "Usuario creado correctamente")
         return redirect('lista_usuarios')
