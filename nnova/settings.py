@@ -150,4 +150,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'valentina10solano@gmail.com'
 EMAIL_HOST_PASSWORD = 'dzlomnwbjullvmpw'
 
-CSRF_TRUSTED_ORIGINS = ['https://railway.app']
+
+# --- CORRECCIÓN DE SEGURIDAD CSRF PARA RAILWAY ---
+# Orígenes permitidos y de confianza para procesar formularios en producción
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-41465.up.railway.app',
+    'https://*.railway.app'
+]
+
+# Configuración esencial para que Django detecte que Railway usa HTTPS seguro
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
