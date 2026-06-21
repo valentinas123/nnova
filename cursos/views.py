@@ -182,15 +182,19 @@ def logout_usuario(request):
 
 def contacto(request):
     if request.method == 'POST':
-        mensaje = request.POST.get('mensaje', '')
+        # Capturamos el texto del formulario
+        mensaje_usuario = request.POST.get('mensaje', '').strip()
+        
+        # Estructuramos el cuerpo del correo de forma visible para los logs
+        cuerpo_correo = f"CONTENIDO DEL MENSAJE:\n\n{mensaje_usuario}"
         
         try:
             send_mail(
                 subject=f"Mensaje de contacto: {request.user.username if request.user.is_authenticated else 'Invitado'}",
-                message=mensaje,
+                message=cuerpo_correo, # 👈 Pasamos el cuerpo con el texto explícito
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[settings.EMAIL_HOST_USER],
-                fail_silently=True  # 👈 Volvemos a True de forma segura
+                fail_silently=True
             )
             messages.success(request, "✅ Mensaje enviado correctamente")
         except Exception:
