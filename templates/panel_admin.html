@@ -366,9 +366,9 @@
 
 <script>
     // Datos desde Django
-    const nombres = {{ nombres|safe }};
-    const cantidades = {{ cantidades|safe }};
-    const promedios = {{ promedios|safe }};
+    const nombres = {{ nombres_json|safe }};
+    const cantidades = {{ cantidades_json|safe }};
+    const promedios = {{ promedios_json|safe }};
 
     // 1. Estudiantes por curso (Barras premium)
     new Chart(document.getElementById('grafica1'), {

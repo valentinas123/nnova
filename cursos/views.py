@@ -17,6 +17,8 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 
 import csv
+import json
+from datetime import datetime
 from io import TextIOWrapper
 
 from django.contrib import messages
@@ -287,6 +289,12 @@ def crear_curso(request):
         if docente_id:
             curso.docente_id = docente_id
             curso.save()
+        else:
+            # El docente que crea el curso queda asignado automáticamente
+            curso.docente = request.user
+            curso.docentes.add(request.user)
+            curso.save()
+        messages.success(request, f'Curso "{nombre}" creado correctamente.')
         return redirect('panel_docente')
 
     return render(request, 'crear_curso.html')
@@ -493,7 +501,7 @@ def pdf_general(request):
 @login_required
 @never_cache
 def panel_admin(request):
-    if request.user.rol != 'admin':
+    if request.user.rol != 'admin' and not request.user.is_superuser:
         return redirect('inicio')
 
     #  estadísticas generales
@@ -520,9 +528,9 @@ def panel_admin(request):
         'total_cursos': total_cursos,
         'total_inscripciones': total_inscripciones,
 
-        'nombres': nombres,
-        'cantidades': cantidades,
-        'promedios': promedios,
+        'nombres_json': json.dumps(nombres),
+        'cantidades_json': json.dumps(cantidades),
+        'promedios_json': json.dumps(promedios),
     })
 
 
@@ -1070,7 +1078,9 @@ def crear_actividad(request, curso_id):
 
         try:
             # Parsear fecha
-            fecha_limite = timezone.datetime.fromisoformat(fecha_limite_str)
+            fecha_limite = datetime.fromisoformat(fecha_limite_str)
+            if timezone.is_naive(fecha_limite):
+                fecha_limite = timezone.make_aware(fecha_limite)
             
             Actividad.objects.create(
                 curso=curso,

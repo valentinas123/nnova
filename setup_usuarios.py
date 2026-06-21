@@ -99,3 +99,36 @@ for user_data in USUARIOS:
         print(f"  [ERROR] {username}: {e}", file=sys.stderr)
 
 print("[setup_usuarios] Listo.")
+
+# Reparar cursos huérfanos (sin docente asignado)
+from cursos.models import Curso, Materia, Inscripcion
+from django.db.models import Count
+
+docente1 = Usuario.objects.filter(username='docente1').first()
+if docente1:
+    orphan_courses = Curso.objects.filter(docente__isnull=True).annotate(
+        doc_count=Count('docentes')
+    ).filter(doc_count=0)
+    fixed = 0
+    for curso in orphan_courses:
+        curso.docente = docente1
+        curso.save()
+        curso.docentes.add(docente1)
+        fixed += 1
+    if fixed:
+        print(f"[setup_usuarios] Reparados {fixed} curso(s) sin docente asignado.")
+
+    # Crear curso de ejemplo si la plataforma está vacía
+    if not Curso.objects.exists():
+        materia, _ = Materia.objects.get_or_create(
+            nombre='Programación',
+            defaults={'descripcion': 'Cursos de desarrollo de software'}
+        )
+        curso = Curso.objects.create(
+            nombre='Introducción a Python',
+            descripcion='Aprende los fundamentos de Python desde cero.',
+            materia=materia,
+            docente=docente1,
+        )
+        curso.docentes.add(docente1)
+        print(f"[setup_usuarios] Curso de ejemplo creado: {curso.nombre}")

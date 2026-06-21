@@ -25,11 +25,10 @@ def login_usuario(request):
 
         user = None
 
-        # Si el usuario ingresó un correo, buscar el username correspondiente
+        # login por email o username
         if '@' in username:
             try:
                 user_obj = Usuario.objects.get(email=username)
-                # Autenticar con el username real del usuario encontrado por email
                 user = authenticate(request, username=user_obj.username, password=password)
             except Usuario.DoesNotExist:
                 user = None
@@ -37,21 +36,29 @@ def login_usuario(request):
             user = authenticate(request, username=username, password=password)
 
         if user is not None:
+
             if not user.is_active:
                 return render(request, 'login.html', {
-                    'error': 'Tu cuenta está desactivada. Contacta al administrador.'
+                    'error': 'Tu cuenta está desactivada.'
                 })
+
             login(request, user)
-            if user.rol == 'admin':
+
+            # 🔥 DEBUG IMPORTANTE (para ver qué rol tienes realmente)
+            print("ROL DEL USUARIO:", user.rol)
+
+            # 🔥 REDIRECCIÓN POR ROL
+            if user.rol == 'admin' or user.is_superuser:
                 return redirect('panel_admin')
             elif user.rol == 'docente':
                 return redirect('panel_docente')
             else:
                 return redirect('inicio')
-        else:
-            return render(request, 'login.html', {
-                'error': 'Nombre de usuario o contraseña incorrectos'
-            })
+
+        return render(request, 'login.html', {
+            'error': 'Credenciales incorrectas'
+        })
+
     return render(request, 'login.html')
 
 
