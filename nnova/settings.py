@@ -10,8 +10,12 @@ SECRET_KEY = 'django-insecure-n7(@c@$+&ue8t&6@7jirq5ie)a)ep@d0ema=vjzjfzmc@1+6+v
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
-
+# 🔵 PRODUCCIÓN (Railway)
+ALLOWED_HOSTS = [
+    "web-production-41465.up.railway.app",
+    "localhost",
+    "127.0.0.1"
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -55,7 +59,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'nnova.wsgi.application'
 
 
-# DB (Railway compatible - simple y estable)
+# 🟡 BASE DE DATOS (SQLite en Railway - simple)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -72,14 +76,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'usuarios.validators.ComplejidadPasswordValidator'},
 ]
 
-
 LANGUAGE_CODE = 'es'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
 
-# STATIC
+# 🟢 STATIC FILES
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -94,19 +97,19 @@ STORAGES = {
 }
 
 
-# AUTH
+# 🟢 AUTH
 AUTH_USER_MODEL = 'usuarios.Usuario'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
 
-# MEDIA
+# 🟢 MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 
-# EMAIL (CORREGIDO)
+# 🟢 EMAIL (GMAIL SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -115,9 +118,13 @@ EMAIL_HOST_USER = 'valentina10solano@gmail.com'
 EMAIL_HOST_PASSWORD = 'dzlomnwbjullvmpw'
 
 
-# CSRF PARA RAILWAY (CORRECTO)
+# 🔵 CSRF RAILWAY (IMPORTANTE)
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.railway.app",
+    "https://web-production-41465.up.railway.app"
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# 🔒 SEGURIDAD PRODUCCIÓN
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
