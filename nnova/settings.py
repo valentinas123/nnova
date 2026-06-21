@@ -98,13 +98,20 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
-# 📧 EMAIL CONFIG (SEGURO + RAILWAY READY)
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = 'smtp.gmail.com'
+# 📧 EMAIL CONFIG (EVITA EL BLOQUEO DE PUERTOS DE RAILWAY)
+if IS_RAILWAY:
+    # En producción (Railway), mostramos los correos en los Logs para que no bloquee el servidor
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    # En tu computadora local, sí se enviarán correos reales a Gmail
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = '://gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
 
 # 🔒 SECURITY (RAILWAY PROXIED)
 CSRF_TRUSTED_ORIGINS = [

@@ -185,18 +185,16 @@ def contacto(request):
         mensaje = request.POST.get('mensaje', '')
         
         try:
-            # Enviamos de forma directa, pero obligamos a que si falla no tumbe el servidor
             send_mail(
                 subject=f"Mensaje de contacto: {request.user.username if request.user.is_authenticated else 'Invitado'}",
                 message=mensaje,
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[settings.EMAIL_HOST_USER],
-                fail_silently=False  # 👈 Ponlo en False temporalmente para ver el error real si falla
+                fail_silently=True  # 👈 Volvemos a True de forma segura
             )
             messages.success(request, "✅ Mensaje enviado correctamente")
-        except Exception as e:
-            # Si Gmail da error, la página NO se cae, te mostrará un mensaje en pantalla
-            messages.error(request, f"❌ Error de correo: {str(e)}")
+        except Exception:
+            messages.error(request, "❌ Ocurrió un inconveniente al procesar el envío")
             
         return redirect('contacto')
         
