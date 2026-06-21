@@ -22,8 +22,8 @@ from datetime import datetime
 from io import TextIOWrapper
 
 from django.contrib import messages
-from django.core.mail import send_mail
-from django.conf import settings
+#from django.core.mail import send_mail
+#from django.conf import settings
 
 # ===================== ESTUDIANTE =====================
 
@@ -555,7 +555,11 @@ def crear_usuario(request):
         password = request.POST.get('password', '')
         rol = request.POST.get('rol')
 
-        # VALIDACIÓN DE USUARIO
+        from django.core.validators import validate_email
+        from django.core.exceptions import ValidationError
+        from django.contrib.auth.password_validation import validate_password
+
+        # Validar usuario
         if not username:
             messages.error(request, "El nombre de usuario es obligatorio")
             return redirect('crear_usuario')
@@ -564,11 +568,7 @@ def crear_usuario(request):
             messages.error(request, "El nombre de usuario ya existe")
             return redirect('crear_usuario')
 
-        # VALIDACIÓN DE CORREO
-        from django.core.validators import validate_email
-        from django.core.exceptions import ValidationError
-        from django.contrib.auth.password_validation import validate_password
-
+        # Validar correo
         if not email:
             messages.error(request, "El correo electrónico es obligatorio")
             return redirect('crear_usuario')
@@ -576,14 +576,14 @@ def crear_usuario(request):
         try:
             validate_email(email)
         except ValidationError:
-            messages.error(request, "El formato del correo electrónico ingresado no es válido")
+            messages.error(request, "El correo electrónico no es válido")
             return redirect('crear_usuario')
 
         if Usuario.objects.filter(email=email).exists():
-            messages.error(request, "Este correo electrónico ya se encuentra registrado")
+            messages.error(request, "Este correo ya está registrado")
             return redirect('crear_usuario')
 
-        # VALIDACIÓN DE CONTRASEÑA
+        # Validar contraseña
         if not password:
             messages.error(request, "La contraseña es obligatoria")
             return redirect('crear_usuario')
@@ -594,25 +594,13 @@ def crear_usuario(request):
             messages.error(request, e.messages[0])
             return redirect('crear_usuario')
 
-        # CREACIÓN DEL USUARIO
-        usuario = Usuario.objects.create(
+        # Crear usuario
+        Usuario.objects.create_user(
             username=username,
             email=email,
-            rol=rol,
-            password=make_password(password)
+            password=password,
+            rol=rol
         )
-
-        # ENVÍO DE CORREO (opcional)
-        try:
-            send_mail(
-                'Bienvenido',
-                f'Hola {usuario.username}, tu cuenta fue creada correctamente.',
-                settings.EMAIL_HOST_USER,
-                [usuario.email],
-                fail_silently=True,
-            )
-        except Exception:
-            pass
 
         messages.success(request, "Usuario creado correctamente")
         return redirect('lista_usuarios')
