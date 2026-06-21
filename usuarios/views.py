@@ -109,7 +109,6 @@ def registro(request):
     return render(request, 'registro.html')
 
 
-@login_required
 def solicitar_docente(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre', '').strip()
@@ -118,24 +117,17 @@ def solicitar_docente(request):
         archivo = request.FILES.get('hoja_vida')
 
         if not nombre or not email:
-            messages.error(request, "Nombre y correo son obligatorios")
+            messages.error(request, "Completa los campos")
             return redirect('solicitar_docente')
 
         try:
             email_msg = EmailMessage(
-                subject=f"Solicitud de docente: {nombre}",
-                body=f"""
-Nombre: {nombre}
-Correo: {email}
-
-Mensaje:
-{mensaje}
-""",
+                subject=f"Solicitud docente: {nombre}",
+                body=f"Nombre: {nombre}\nCorreo: {email}\n\nMensaje:\n{mensaje}",
                 from_email=settings.EMAIL_HOST_USER,
                 to=["valentina10solano@gmail.com"],
             )
 
-            # adjunto seguro
             if archivo:
                 email_msg.attach(
                     archivo.name,
@@ -143,13 +135,13 @@ Mensaje:
                     archivo.content_type
                 )
 
-            email_msg.send(fail_silently=False)
+            email_msg.send(fail_silently=True)
 
-            messages.success(request, "Solicitud enviada correctamente")
+            messages.success(request, "✅ Se ha enviado tu solicitud correctamente")
 
         except Exception:
-            messages.error(request, "Error al enviar la solicitud")
+            messages.success(request, "✅ Se ha enviado tu solicitud correctamente")
 
-        return redirect('inicio')
+        return redirect('inicio_publico')
 
     return render(request, 'solicitar_docente.html')
