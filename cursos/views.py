@@ -181,27 +181,21 @@ def logout_usuario(request):
 
 def contacto(request):
     if request.method == 'POST':
-        mensaje = request.POST.get('mensaje', '').strip()
-
-        if not mensaje:
-            messages.error(request, "Escribe un mensaje")
-            return redirect('contacto')
+        mensaje = request.POST.get('mensaje', '')
 
         try:
-            email = EmailMessage(
-                subject=f"Mensaje de {request.user.username if request.user.is_authenticated else 'Invitado'}",
-                body=mensaje,
+            send_mail(
+                subject=f"Mensaje de contacto: {request.user.username if request.user.is_authenticated else 'Invitado'}",
+                message=mensaje,
                 from_email=settings.EMAIL_HOST_USER,
-                to=["valentina10solano@gmail.com"],
+                recipient_list=[settings.EMAIL_HOST_USER],
+                fail_silently=True
             )
-            email.send(fail_silently=True)
-
-            messages.success(request, "✅ Se ha enviado tu mensaje correctamente")
-
+            messages.success(request, "✅ Mensaje enviado correctamente")
         except Exception:
-            messages.success(request, "✅ Se ha enviado tu mensaje correctamente")
+            messages.error(request, "❌ No se pudo enviar el mensaje")
 
-        return redirect('inicio')  # o donde quieras
+        return redirect('contacto')
 
     return render(request, 'contacto.html')
 

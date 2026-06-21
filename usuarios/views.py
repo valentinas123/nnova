@@ -111,37 +111,29 @@ def registro(request):
 
 def solicitar_docente(request):
     if request.method == 'POST':
-        nombre = request.POST.get('nombre', '').strip()
-        email = request.POST.get('email', '').strip()
-        mensaje = request.POST.get('mensaje', '').strip()
-        archivo = request.FILES.get('hoja_vida')
-
-        if not nombre or not email:
-            messages.error(request, "Completa los campos")
-            return redirect('solicitar_docente')
+        nombre = request.POST.get('nombre', '')
+        email = request.POST.get('email', '')
+        mensaje = request.POST.get('mensaje', '')
 
         try:
             email_msg = EmailMessage(
                 subject=f"Solicitud docente: {nombre}",
-                body=f"Nombre: {nombre}\nCorreo: {email}\n\nMensaje:\n{mensaje}",
+                body=f"Nombre: {nombre}\nEmail: {email}\nMensaje:\n{mensaje}",
                 from_email=settings.EMAIL_HOST_USER,
-                to=["valentina10solano@gmail.com"],
+                to=[settings.EMAIL_HOST_USER],
             )
 
-            if archivo:
-                email_msg.attach(
-                    archivo.name,
-                    archivo.read(),
-                    archivo.content_type
-                )
+            if request.FILES.get('hoja_vida'):
+                file = request.FILES['hoja_vida']
+                email_msg.attach(file.name, file.read(), file.content_type)
 
             email_msg.send(fail_silently=True)
 
-            messages.success(request, "✅ Se ha enviado tu solicitud correctamente")
+            messages.success(request, "✅ Solicitud enviada correctamente")
 
         except Exception:
-            messages.success(request, "✅ Se ha enviado tu solicitud correctamente")
+            messages.error(request, "❌ No se pudo enviar la solicitud")
 
-        return redirect('inicio_publico')
+        return redirect('inicio')
 
     return render(request, 'solicitar_docente.html')
