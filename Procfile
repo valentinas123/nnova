@@ -1,1 +1,1 @@
-web: gunicorn nnova.wsgi:application
+web: python init.py && gunicorn nnova.wsgi:application --bind 0.0.0.0:$PORT
