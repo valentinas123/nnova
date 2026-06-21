@@ -12,7 +12,7 @@ SECRET_KEY = 'django-insecure-n7(@c@$+&ue8t&6@7jirq5ie)a)ep@d0ema=vjzjfzmc@1+6+v
 # Detectar si estamos en Railway (producción) o local
 IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None or os.environ.get('PORT') is not None
 
-DEBUG = not IS_RAILWAY
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "web-production-41465.up.railway.app",
