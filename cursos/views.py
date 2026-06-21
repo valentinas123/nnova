@@ -24,7 +24,7 @@ from io import TextIOWrapper
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-import threading
+
 
 # ===================== ESTUDIANTE =====================
 
@@ -184,20 +184,20 @@ def contacto(request):
     if request.method == 'POST':
         mensaje = request.POST.get('mensaje', '')
         
-        # Creamos una función interna con la tarea pesada
-        def enviar_email_bg():
+        try:
+            # Enviamos de forma directa, pero obligamos a que si falla no tumbe el servidor
             send_mail(
                 subject=f"Mensaje de contacto: {request.user.username if request.user.is_authenticated else 'Invitado'}",
                 message=mensaje,
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[settings.EMAIL_HOST_USER],
-                fail_silently=True
+                fail_silently=False  # 👈 Ponlo en False temporalmente para ver el error real si falla
             )
-
-        # 🚀 Se ejecuta en segundo plano de inmediato sin congelar la página
-        threading.Thread(target=enviar_email_bg).start()
-        
-        messages.success(request, "✅ Mensaje enviado correctamente")
+            messages.success(request, "✅ Mensaje enviado correctamente")
+        except Exception as e:
+            # Si Gmail da error, la página NO se cae, te mostrará un mensaje en pantalla
+            messages.error(request, f"❌ Error de correo: {str(e)}")
+            
         return redirect('contacto')
         
     return render(request, 'contacto.html')
