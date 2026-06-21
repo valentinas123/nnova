@@ -5,9 +5,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('usuarios.urls')),   # 👈 primero
-    path('app/', include('cursos.urls')), # 👈 sistema interno
+    path('', include('usuarios.urls')),    # Sistema de autenticación
+    path('app/', include('cursos.urls')),   # Sistema interno de cursos
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Corrección para que funcione en producción (Railway) con DEBUG = False
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
