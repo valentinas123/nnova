@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Carga de Iconos Profesionales (FontAwesome) -->
+<link rel="stylesheet" href="https://cloudflare.com">
+
+<style>
+    :root {
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --danger: #ef4444;
+        --danger-hover: #dc2626;
+        --success: #10b981;
+        --dark: #1e293b;
+        --gray-light: #f8fafc;
+        --gray-border: #e2e8f0;
+        --text-muted: #64748b;
+    }
+
+    .contenedor {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* --- CABECERA Y FILTROS --- */
+    .header-gestion {
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .btn-volver {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .btn-volver:hover { color: var(--dark); }
+
+    .btn-principal {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--primary);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-principal:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .form-filtros {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--gray-border);
+    }
+
+    .input-filtro {
+        padding: 10px 15px;
+        border: 1px solid var(--gray-border);
+        border-radius: 6px;
+        outline: none;
+        min-width: 200px;
+    }
+
+    .input-filtro:focus { border-color: var(--primary); }
+
+    /* --- GRID Y CARDS --- */
+    .grid-cursos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .card-curso {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-curso:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+
+    .badge-info {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--gray-light);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: var(--dark);
+        font-weight: 500;
+    }
+
+    /* --- BOTONES DE ACCIÓN --- */
+    .footer-card {
+        display: flex;
+        border-top: 1px solid var(--gray-border);
+        margin-top: auto;
+    }
+
+    .btn-accion {
+        flex: 1;
+        padding: 15px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+
+    .btn-editar {
+        color: var(--primary);
+        border-right: 1px solid var(--gray-border);
+    }
+
+    .btn-editar:hover { background: #eff6ff; }
+
+    .btn-eliminar { color: var(--danger); }
+
+    .btn-eliminar:hover { background: #fef2f2; }
+
+    /* --- TOASTS --- */
+    .mensaje-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--dark);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+</style>
+
+<div class="contenedor">
+
+    <!-- CABECERA -->
+    <div class="header-gestion">
+        <div>
+            <a href="{% url 'panel_admin' %}" class="btn-volver">
+                <i class="fas fa-arrow-left"></i> Volver al panel
+            </a>
+            <h2 style="margin: 10px 0 0 0; color: var(--dark); font-size: 2rem;">Gestión de Cursos</h2>
+        </div>
+        
+        <a href="{% url 'admin_crear_curso' %}" class="btn-principal">
+            <i class="fas fa-plus"></i> Crear Nuevo Curso
+        </a>
+    </div>
+
+    <!-- FILTROS -->
+    <form method="get" class="form-filtros">
+        <input type="text" name="nombre" placeholder="Nombre del curso" class="input-filtro">
+        <input type="text" name="docente" placeholder="Buscar docente" class="input-filtro">
+        <input type="number" name="min" placeholder="Mín. estudiantes" class="input-filtro" style="min-width: 140px;">
+        
+        <button type="submit" class="btn-principal" style="background: var(--dark);">
+            <i class="fas fa-filter"></i> Aplicar Filtros
+        </button>
+    </form>
+
+    <!-- MENSAJES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mensaje-toast js-mensaje">
+                <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- GRID -->
+    <div class="grid-cursos">
+    {% for curso in cursos %}
+        <div class="card-curso">
+
+            {% if curso.imagen %}
+                <img src="{{ curso.imagen.url }}" style="width: 100%; height: 180px; object-fit: cover;">
+            {% else %}
+                <div style="height: 180px; background: #eef2f6; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                    <i class="fas fa-graduation-cap fa-3x"></i>
+                </div>
+            {% endif %}
+
+            <div style="padding: 20px;">
+                <h3 style="margin: 0 0 10px 0; color: var(--dark);">{{ curso.nombre }}</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 15px;">
+                    {{ curso.descripcion|truncatechars:85 }}
+                </p>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="badge-info">
+                        <i class="fas fa-user-tie"></i> {{ curso.docente.username }}
+                    </span>
+                    <span class="badge-info">
+                        <i class="fas fa-users"></i> {{ curso.total_estudiantes }}
+                    </span>
+                    <span class="badge-info">
+                        <i class="fas fa-star" style="color: #f59e0b;"></i> {{ curso.promedio|default:"0"|floatformat:1 }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="footer-card">
+                <a href="{% url 'admin_editar_curso' curso.id %}" class="btn-accion btn-editar">
+                    <i class="fas fa-pen-to-square"></i> Editar
+                </a>
+                <a href="{% url 'admin_eliminar_curso' curso.id %}" class="btn-accion btn-eliminar">
+                    <i class="fas fa-trash-can"></i> Eliminar
+                </a>
+            </div>
+
+        </div>
+    {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 60px; background: white; border-radius: 12px; border: 1px dashed var(--gray-border);">
+            <i class="fas fa-folder-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">No se encontraron cursos con esos criterios.</p>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Manejo de cierre automático de mensajes
+    document.addEventListener('DOMContentLoaded', () => {
+        const alertas = document.querySelectorAll('.js-mensaje');
+        alertas.forEach(alerta => {
+            setTimeout(() => {
+                alerta.style.opacity = '0';
+                alerta.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => alerta.remove(), 500);
+            }, 4000);
+        });
+    });
+</script>
+{% endblock %}

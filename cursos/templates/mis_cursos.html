@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .mis-cursos-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px 120px 24px;
+    }
+
+    .titulo-principal {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -1px;
+        margin-bottom: 8px;
+    }
+
+    .subtitulo-principal {
+        color: var(--text-sub);
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
+
+    .course-card .course-thumb-fallback {
+        width: 100%;
+        height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .btn-cancelar-modern {
+        background: #fee2e2;
+        color: #ef4444;
+        border: 1px solid #fca5a5;
+        border-radius: var(--radius-sm);
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .btn-cancelar-modern:hover {
+        background: #fecaca;
+        color: #dc2626;
+    }
+</style>
+
+<div class="mis-cursos-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 25px;">
+        <div>
+            <h2 class="titulo-principal">Mis Cursos</h2>
+            <p class="subtitulo-principal" style="margin-bottom: 0;">Consulta tus asignaturas inscritas y accede a sus actividades.</p>
+        </div>
+        <a href="{% url 'inicio' %}" style="text-decoration: none;">
+            <button class="btn-secondary-header" style="cursor: pointer; padding: 10px 20px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-arrow-left"></i> Catálogo General
+            </button>
+        </a>
+    </div>
+
+    <div class="courses-grid">
+    {% for ins in inscripciones %}
+        <div class="course-card">
+            
+            {% if ins.curso.imagen %}
+                <img src="{{ ins.curso.imagen.url }}" class="course-thumb">
+            {% else %}
+                <div class="course-thumb-fallback" style="background: linear-gradient(135deg, {% if forloop.counter|divisibleby:3 %}#6366f1, #a855f7{% elif forloop.counter|divisibleby:2 %}#10b981, #3b82f6{% else %}#ec4899, #f43f5e{% endif %});">
+                    📚 {{ ins.curso.nombre|slice:":2"|upper }}
+                </div>
+            {% endif %}
+
+            <div class="course-body">
+                <h3 class="course-title">
+                    <a href="{% url 'detalle_curso' ins.curso.id %}" style="color: inherit; text-decoration: none;">
+                        {{ ins.curso.nombre }}
+                    </a>
+                </h3>
+
+                <p style="color: var(--text-sub); font-size: 0.88rem; margin: 8px 0; line-height: 1.5; flex-grow: 1;">
+                    {{ ins.curso.descripcion|truncatechars:100 }}
+                </p>
+                
+                <p style="margin: 6px 0 16px 0; color: var(--muted); font-size: 0.82rem; font-weight: 600;">
+                    <i class="fas fa-user-tie" style="color: var(--primary); margin-right: 4px;"></i> {{ ins.curso.docente.username }}
+                </p>
+
+                <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <a href="{% url 'detalle_curso' ins.curso.id %}" style="text-decoration: none; width: 100%;">
+                        <button class="btn btn-purple" style="width: 100%; padding: 10px 14px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+                            <i class="fas fa-door-open"></i> Entrar al Curso
+                        </button>
+                    </a>
+                    
+                    <form method="post" action="{% url 'cancelar_inscripcion' ins.curso.id %}" style="width: 100%;">
+                        {% csrf_token %}
+                        <button class="btn-cancelar-modern">
+                            <i class="fas fa-times-circle"></i> Cancelar inscripción
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 24px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border); color: var(--text-sub);">
+            <i class="fas fa-book-reader" style="font-size: 3.5rem; color: var(--border); margin-bottom: 20px; display: block;"></i>
+            <p style="font-weight: 700; font-size: 1.25rem; margin: 0 0 8px 0;">No estás inscrito en ningún curso todavía</p>
+            <p style="font-size: 0.9rem; color: var(--muted); margin: 0 0 20px 0;">¡Inscríbete en cursos desde el catálogo principal para comenzar tu aprendizaje!</p>
+            <a href="{% url 'inicio' %}" style="text-decoration: none;">
+                <button class="btn btn-purple" style="border: none; cursor: pointer;">Ver Catálogo de Cursos</button>
+            </a>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="contenedor" style="max-width:500px; margin:40px auto; background: var(--bg-card); padding:30px; border-radius: var(--radius-md); box-shadow: var(--shadow-md);">
+<h2 style="text-align:center; margin-bottom:20px;">Crear Usuario</h2>
+<form method="post">
+{% csrf_token %}
+<div class="form-group" style="margin-bottom:15px;">
+    <input type="text" name="username" placeholder="Usuario" required style="width:100%; padding:12px; border:1px solid var(--border); border-radius: var(--radius-sm);">
+</div>
+<div class="form-group" style="margin-bottom:15px;">
+    <input type="email" name="email" placeholder="Correo" required style="width:100%; padding:12px; border:1px solid var(--border); border-radius: var(--radius-sm);">
+</div>
+<div class="form-group" style="margin-bottom:15px;">
+    <select name="rol" required style="width:100%; padding:12px; border:1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text);">
+        <option value="admin">Administrador</option>
+        <option value="docente">Docente</option>
+        <option value="estudiante">Estudiante</option>
+    </select>
+</div>
+<div class="form-group" style="margin-bottom:20px;">
+    <input type="password" name="password" placeholder="Contraseña" required style="width:100%; padding:12px; border:1px solid var(--border); border-radius: var(--radius-sm);">
+</div>
+<button type="submit" style="width:100%; padding:12px; background: linear-gradient(135deg,var(--primary),var(--accent)); color:#fff; border:none; border-radius: var(--radius-sm); font-weight:600; cursor:pointer; transition: var(--transition);">Crear</button>
+</form>
+<div style="margin-top:15px; text-align:center;">
+    <a href="{% url 'lista_usuarios' %}" style="color: var(--primary); text-decoration:none;">← Volver al listado</a>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.container {
+    max-width: 500px;
+    margin: 60px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #2c3e50;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.btn {
+    width: 100%;
+    padding: 14px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
+.btn-volver {
+    display: inline-block;
+    margin-bottom: 15px;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+</style>
+
+<div class="container">
+
+    <a href="{% url 'panel_admin' %}" class="btn-volver">← Volver</a>
+
+    <h2>Inscribir Estudiante</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Estudiante</label>
+            <select name="estudiante" required>
+                <option value="">Seleccionar estudiante</option>
+                {% for e in estudiantes %}
+                    <option value="{{ e.id }}">{{ e.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Curso</label>
+            <select name="curso" required>
+                <option value="">Seleccionar curso</option>
+                {% for c in cursos %}
+                    <option value="{{ c.id }}">{{ c.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn">
+            Inscribir
+        </button>
+
+    </form>
+
+</div>
+{% endblock %}

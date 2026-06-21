@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Eliminar curso</h2>
+
+<p>¿Estás segura que deseas eliminar el curso <strong>{{ curso.nombre }}</strong>?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button style="background:red;">Sí, eliminar</button>
+    <br><br>
+</form>
+
+<a href="{% url 'panel_docente' %}">
+    <button>Cancelar</button>
+</a>
+
+{% endblock %}

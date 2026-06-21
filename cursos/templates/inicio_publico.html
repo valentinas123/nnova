@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Contenedor General */
+    .landing-page {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: #333;
+        padding-bottom: 150px; /* Espacio extra al final */
+        line-height: 1.6;
+    }
+
+    /* SECCIÓN HERO - Texto Central */
+    .hero {
+        padding: 120px 20px;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 80px;
+    }
+
+    .hero h1 {
+        font-size: 4rem;
+        color: #1a1a1a;
+        margin-bottom: 25px;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .hero p {
+        font-size: 1.4rem;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto 45px auto;
+    }
+
+    .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .btn-primary, .btn-outline {
+        padding: 16px 45px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-primary {
+        background-color: #000;
+        color: #fff;
+        border: 2px solid #000;
+    }
+
+    .btn-primary:hover {
+        background-color: #333;
+        border-color: #333;
+    }
+
+    .btn-outline {
+        background-color: transparent;
+        color: #000;
+        border: 2px solid #000;
+    }
+
+    .btn-outline:hover {
+        background-color: #000;
+        color: #fff;
+    }
+
+    /* SECCIONES DE CONTENIDO */
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 25px;
+    }
+
+    .section-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 100px;
+        margin-bottom: 100px;
+        align-items: start;
+    }
+
+    .label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #007bff;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .title-large {
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        margin-bottom: 25px;
+        line-height: 1.2;
+    }
+
+    .text-block {
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    /* TARJETAS DE BENEFICIOS - Minimalistas */
+    .features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+        margin: 80px 0;
+    }
+
+    .feature-item {
+        border-top: 1px solid #000;
+        padding-top: 25px;
+    }
+
+    .feature-item h3 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        color: #000;
+    }
+
+    .feature-item p {
+        font-size: 0.95rem;
+        color: #666;
+    }
+
+    /* BANNER FINAL */
+    .cta-footer {
+        background-color: #000;
+        color: #fff;
+        padding: 80px 40px;
+        text-align: center;
+        border-radius: 8px;
+        margin-top: 40px;
+    }
+
+    .cta-footer h2 {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="landing-page">
+    
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h1>Nueva Era Educativa</h1>
+            <p>Nova Learning es el entorno digital diseñado para docentes y estudiantes que buscan excelencia, orden y resultados reales.</p>
+            
+            <div class="btn-group">
+                <a href="/login/" class="btn-primary">Inicia sesión</a>
+                <a href="/registro/" class="btn-outline">Registrar cuenta</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Quienes Somos -->
+        <section class="section-grid">
+            <div>
+                <span class="label">Nuestra Misión</span>
+                <h2 class="title-large">Educación enfocada en el progreso constante.</h2>
+            </div>
+            <div class="text-block">
+                <p>En Nnova Learning pensamos en ti como estudiante. 
+                    Nuestra plataforma está diseñada para que puedas acceder fácilmente a tus cursos, seguir tu progreso y mantenerte enfocado en lo más importante: aprender.</p>
+                    <p>Aquí podrás ver tus clases, consultar tus avances y recibir retroalimentación de tus docentes de forma clara y organizada. 
+                        Todo está pensado para que no te pierdas entre información innecesaria y puedas aprovechar mejor tu tiempo.</p>
+                <p style="margin-top: 20px;">Creemos que aprender debe ser simple, accesible y motivador. Por eso, en Nnova Learning te damos las herramientas para que avances a tu ritmo y mejores cada día.</p>
+            </div>
+        </section>
+
+        <!-- Beneficios -->
+        <section>
+            <span class="label" style="text-align: center;">Servicios Integrados si eres docente</span>
+            <div class="features">
+                <div class="feature-item">
+                    <h3>Gestión Centralizada </h3>
+                    <p>Todo el material de estudio y los reportes de rendimiento organizados en un solo lugar, sin complicaciones.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Acceso Multiplataforma</h3>
+                    <p>Estudia o califica desde cualquier lugar del mundo. Tu panel personal está siempre sincronizado.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Reportes PDF</h3>
+                    <p>Genera documentos detallados sobre el avance de los cursos con un solo clic para fines administrativos o personales.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Final -->
+        <section class="cta-footer">
+            <h2>Comienza a transformar tu aprendizaje ahora.</h2>
+            <a href="/registro/" class="btn-primary" style="background-color: #fff; color: #000; border-color: #fff;">Crear mi cuenta gratuita</a>
+        </section>
+    </div>
+
+</div>
+{% endblock %}

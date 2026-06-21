@@ -1,0 +1,635 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .usuarios-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px 120px 24px;
+    }
+
+    /* Header */
+    .usuarios-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding-bottom: 24px;
+        border-bottom: 1.5px solid var(--border);
+        margin-bottom: 35px;
+    }
+
+    .usuarios-header-info h2 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -1px;
+        margin: 0 0 6px 0;
+    }
+
+    .usuarios-header-info p {
+        color: var(--text-sub);
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    .usuarios-header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-header-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        font-size: 0.92rem;
+        cursor: pointer;
+        border: none;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+
+    .btn-header-back {
+        border: 1.5px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-sub);
+    }
+
+    .btn-header-back:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-light);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-header-create {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #fff;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-header-create:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        opacity: 0.93;
+    }
+
+    .btn-header-report {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-header-report:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        opacity: 0.93;
+    }
+
+    /* Stats Strip */
+    .usuarios-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .usuarios-stat {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .usuarios-stat::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; bottom: 0;
+        width: 4px;
+    }
+
+    .usuarios-stat.blue::before { background: var(--primary); }
+    .usuarios-stat.purple::before { background: var(--accent); }
+    .usuarios-stat.green::before { background: #10b981; }
+    .usuarios-stat.amber::before { background: #f59e0b; }
+
+    .usuarios-stat:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-icon-mini {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+    }
+
+    .stat-icon-mini.blue { background: var(--primary-light); color: var(--primary); }
+    .stat-icon-mini.purple { background: var(--accent-light); color: var(--accent); }
+    .stat-icon-mini.green { background: #ecfdf5; color: #10b981; }
+    .stat-icon-mini.amber { background: #fff3cd; color: #d97706; }
+
+    .stat-data {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-data .stat-number {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--text);
+        line-height: 1.1;
+    }
+
+    .stat-data .stat-text {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 3px;
+    }
+
+    /* Search bar */
+    .usuarios-search {
+        margin-bottom: 24px;
+    }
+
+    .search-wrapper {
+        position: relative;
+        max-width: 400px;
+    }
+
+    .search-wrapper input {
+        width: 100%;
+        padding: 12px 16px 12px 44px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 0.92rem;
+        outline: none;
+        background: var(--bg-card);
+        color: var(--text);
+        transition: var(--transition);
+        font-family: inherit;
+    }
+
+    .search-wrapper input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        top: 50%;
+        left: 16px;
+        transform: translateY(-50%);
+        color: var(--muted);
+        font-size: 0.95rem;
+    }
+
+    /* Table */
+    .usuarios-table-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .usuarios-table-header {
+        padding: 24px 28px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .usuarios-table-header h3 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .usuarios-table-header .count-badge {
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: var(--bg-section);
+        color: var(--text-sub);
+        padding: 4px 12px;
+        border-radius: 100px;
+        border: 1px solid var(--border);
+    }
+
+    .usuarios-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .usuarios-table thead {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+    }
+
+    .usuarios-table th {
+        padding: 14px 28px;
+        text-align: left;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .usuarios-table td {
+        padding: 16px 28px;
+        font-size: 0.92rem;
+        color: var(--text-sub);
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+    }
+
+    .usuarios-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .usuarios-table tbody tr {
+        transition: var(--transition);
+    }
+
+    .usuarios-table tbody tr:hover {
+        background: var(--bg-section);
+    }
+
+    /* User info */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .user-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.92rem;
+        text-transform: uppercase;
+        flex-shrink: 0;
+        color: #fff;
+    }
+
+    .user-avatar.estudiante-avatar {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+    }
+
+    .user-avatar.docente-avatar {
+        background: linear-gradient(135deg, #10b981, #34d399);
+    }
+
+    .user-avatar.admin-avatar {
+        background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    }
+
+    .user-name {
+        font-weight: 700;
+        color: var(--text);
+        font-size: 0.95rem;
+    }
+
+    .user-email {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* Rol badge */
+    .rol-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 14px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: capitalize;
+    }
+
+    .rol-badge.rol-estudiante {
+        background: var(--primary-light);
+        color: var(--primary);
+        border: 1px solid #d8d4fc;
+    }
+
+    .rol-badge.rol-docente {
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #a7f3d0;
+    }
+
+    .rol-badge.rol-admin {
+        background: #fff3cd;
+        color: #92400e;
+        border: 1px solid #fcd34d;
+    }
+
+    /* Action buttons */
+    .action-btns {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .btn-table-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 8px 16px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.8rem;
+        cursor: pointer;
+        border: none;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+
+    .btn-table-edit {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .btn-table-edit:hover {
+        background: var(--primary);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-table-delete {
+        background: #fef2f2;
+        color: #ef4444;
+    }
+
+    .btn-table-delete:hover {
+        background: #ef4444;
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Empty */
+    .empty-usuarios {
+        text-align: center;
+        padding: 60px 24px;
+    }
+
+    .empty-usuarios i {
+        font-size: 3.5rem;
+        color: var(--border);
+        margin-bottom: 16px;
+    }
+
+    .empty-usuarios h4 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 6px 0;
+    }
+
+    .empty-usuarios p {
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin: 0;
+    }
+
+    /* Row number */
+    .row-num {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--bg-section);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-sub);
+    }
+
+    @media (max-width: 768px) {
+        .usuarios-table th,
+        .usuarios-table td {
+            padding: 12px 16px;
+        }
+
+        .usuarios-header h2 {
+            font-size: 1.6rem;
+        }
+
+        .user-avatar {
+            display: none;
+        }
+
+        .action-btns {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="usuarios-container">
+    <!-- Header -->
+    <div class="usuarios-header">
+        <div class="usuarios-header-info">
+            <h2>Gestión de Usuarios</h2>
+            <p>Administra las cuentas de estudiantes, docentes y administradores del sistema.</p>
+        </div>
+        <div class="usuarios-header-actions">
+            <a href="{% url 'panel_admin' %}" class="btn-header-action btn-header-back">
+                <i class="fas fa-arrow-left"></i> Volver al Panel
+            </a>
+            <a href="{% url 'crear_usuario' %}" class="btn-header-action btn-header-create">
+                <i class="fas fa-user-plus"></i> Crear Usuario
+            </a>
+            <a href="{% url 'pdf_usuarios' %}" class="btn-header-action btn-header-report">
+                <i class="fas fa-file-pdf"></i> Generar Reporte PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Strip -->
+    <div class="usuarios-stats">
+        <div class="usuarios-stat blue">
+            <div class="stat-icon-mini blue"><i class="fas fa-users"></i></div>
+            <div class="stat-data">
+                <span class="stat-number" id="total-count">{{ usuarios|length }}</span>
+                <span class="stat-text">Total Usuarios</span>
+            </div>
+        </div>
+        <div class="usuarios-stat purple">
+            <div class="stat-icon-mini purple"><i class="fas fa-user-graduate"></i></div>
+            <div class="stat-data">
+                <span class="stat-number" id="est-count">0</span>
+                <span class="stat-text">Estudiantes</span>
+            </div>
+        </div>
+        <div class="usuarios-stat green">
+            <div class="stat-icon-mini green"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="stat-data">
+                <span class="stat-number" id="doc-count">0</span>
+                <span class="stat-text">Docentes</span>
+            </div>
+        </div>
+        <div class="usuarios-stat amber">
+            <div class="stat-icon-mini amber"><i class="fas fa-user-shield"></i></div>
+            <div class="stat-data">
+                <span class="stat-number" id="admin-count">0</span>
+                <span class="stat-text">Administradores</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="usuarios-search">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Buscar usuario por nombre o rol..." oninput="filterTable()">
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="usuarios-table-card">
+        <div class="usuarios-table-header">
+            <h3>
+                <i class="fas fa-list" style="color: var(--primary);"></i>
+                Listado de Usuarios
+            </h3>
+            <span class="count-badge">{{ usuarios|length }} usuario{{ usuarios|length|pluralize:"s" }}</span>
+        </div>
+
+        {% if usuarios %}
+        <div style="overflow-x: auto;">
+            <table class="usuarios-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">#</th>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="usuariosBody">
+                    {% for user in usuarios %}
+                    <tr class="usuario-row" data-name="{{ user.username|lower }}" data-rol="{{ user.rol|lower }}">
+                        <td>
+                            <div class="row-num">{{ forloop.counter }}</div>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar {% if user.rol == 'estudiante' %}estudiante-avatar{% elif user.rol == 'docente' %}docente-avatar{% else %}admin-avatar{% endif %}">
+                                    {{ user.username|first }}
+                                </div>
+                                <div>
+                                    <div class="user-name">{{ user.username }}</div>
+                                    {% if user.email %}
+                                    <div class="user-email">{{ user.email }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="rol-badge rol-{{ user.rol }}">
+                                {% if user.rol == 'estudiante' %}
+                                    <i class="fas fa-user-graduate"></i>
+                                {% elif user.rol == 'docente' %}
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                {% else %}
+                                    <i class="fas fa-user-shield"></i>
+                                {% endif %}
+                                {{ user.rol }}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <div class="action-btns" style="justify-content: center;">
+                                <a href="{% url 'editar_usuario' user.id %}" class="btn-table-action btn-table-edit">
+                                    <i class="fas fa-pen"></i> Editar
+                                </a>
+                                <a href="{% url 'eliminar_usuario' user.id %}" class="btn-table-action btn-table-delete">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-usuarios">
+            <i class="fas fa-user-slash" style="display: block;"></i>
+            <h4>No hay usuarios registrados</h4>
+            <p>Crea un nuevo usuario para comenzar a gestionar la plataforma.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Calculate role counts
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.usuario-row');
+        let est = 0, doc = 0, adm = 0;
+        rows.forEach(row => {
+            const rol = row.getAttribute('data-rol');
+            if (rol === 'estudiante') est++;
+            else if (rol === 'docente') doc++;
+            else adm++;
+        });
+        document.getElementById('est-count').textContent = est;
+        document.getElementById('doc-count').textContent = doc;
+        document.getElementById('admin-count').textContent = adm;
+    });
+
+    // Live search filter
+    function filterTable() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('.usuario-row');
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name');
+            const rol = row.getAttribute('data-rol');
+            if (name.includes(query) || rol.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+{% endblock %}

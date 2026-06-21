@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-content">
+        <div class="hero-badge">🚀 Plataforma educativa moderna</div>
+        <h1 class="hero-title">Aprende, enseña y <span>crece</span> con Innova</h1>
+        <p class="hero-subtitle">Conectamos estudiantes y docentes en un entorno digital moderno, accesible y fácil de usar.</p>
+        <div class="hero-cta">
+            <a href="/registro/" class="btn btn-primary">
+                Empieza gratis &rarr;
+            </a>
+            <a href="/login/" class="btn btn-outline">
+                Iniciar sesión
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== MÉTRICAS ===================== -->
+<div class="section">
+    <div class="section-header">
+        <span class="section-label">Nuestra comunidad</span>
+        <h2 class="section-title">Números que nos respaldan</h2>
+        <p class="section-sub">Miles de personas ya aprenden con nosotros.</p>
+    </div>
+    <div class="grid-3">
+        <div class="metric-card">
+            <div class="metric-icon">📚</div>
+            <div class="metric-value">{{ total_cursos|default:"+" }}</div>
+            <div class="metric-label">Cursos disponibles</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon">👩‍🎓</div>
+            <div class="metric-value">{{ total_estudiantes|default:"+" }}</div>
+            <div class="metric-label">Estudiantes activos</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon">👨‍🏫</div>
+            <div class="metric-value">{{ total_docentes|default:"+" }}</div>
+            <div class="metric-label">Docentes expertos</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== ABOUT / INFO ===================== -->
+<div class="about-section">
+    <div class="about-grid">
+        <!-- Columna izquierda: Misión & Visión -->
+        <div>
+            <h2 class="about-title">¿Quiénes somos?</h2>
+            <p class="about-text">
+                Somos una plataforma educativa que busca transformar la forma de aprender mediante el uso de la tecnología.
+                En Innova Learning conectamos estudiantes y docentes en un entorno moderno, accesible y fácil de usar.
+            </p>
+
+            <h3 style="font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:8px;">🎯 Nuestra misión</h3>
+            <p class="about-text">
+                Brindar herramientas digitales que faciliten el aprendizaje, fomenten el desarrollo de habilidades y mejoren
+                la experiencia educativa de nuestros usuarios.
+            </p>
+
+            <h3 style="font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:8px;">🌟 Nuestra visión</h3>
+            <p class="about-text">
+                Ser una plataforma educativa reconocida por impulsar la innovación y el acceso al conocimiento,
+                contribuyendo al crecimiento académico y profesional de las personas.
+            </p>
+
+            <h3 style="font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:12px;">💎 Nuestros valores</h3>
+            <div class="values-grid">
+                <div class="value-chip"><span class="dot"></span> Innovación</div>
+                <div class="value-chip"><span class="dot"></span> Compromiso</div>
+                <div class="value-chip"><span class="dot"></span> Responsabilidad</div>
+                <div class="value-chip"><span class="dot"></span> Inclusión</div>
+                <div class="value-chip"><span class="dot"></span> Trabajo en equipo</div>
+                <div class="value-chip"><span class="dot"></span> Excelencia</div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Qué ofrecemos -->
+        <div>
+            <h2 class="about-title">¿Qué ofrecemos?</h2>
+            <p class="about-text">Todo lo que necesitas para aprender o enseñar en un solo lugar.</p>
+            <div class="offer-list">
+                <div class="offer-item">
+                    <span class="offer-icon">📖</span>
+                    <span class="offer-text">Cursos y recursos educativos de alta calidad</span>
+                </div>
+                <div class="offer-item">
+                    <span class="offer-icon">📊</span>
+                    <span class="offer-text">Seguimiento del progreso académico en tiempo real</span>
+                </div>
+                <div class="offer-item">
+                    <span class="offer-icon">🎮</span>
+                    <span class="offer-text">Actividades interactivas y dinámicas</span>
+                </div>
+                <div class="offer-item">
+                    <span class="offer-icon">💬</span>
+                    <span class="offer-text">Espacios de comunicación entre estudiantes y docentes</span>
+                </div>
+                <div class="offer-item">
+                    <span class="offer-icon">🔒</span>
+                    <span class="offer-text">Acceso rápido y seguro desde cualquier dispositivo</span>
+                </div>
+                <div class="offer-item">
+                    <span class="offer-icon">🏆</span>
+                    <span class="offer-text">Certificados y reconocimientos de tus logros</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== VENTAJAS ===================== -->
+<div class="section">
+    <div class="section-header">
+        <span class="section-label">¿Por qué elegirnos?</span>
+        <h2 class="section-title">Ventajas de Innova Learning</h2>
+        <p class="section-sub">Diseñado para que aprender sea una experiencia increíble.</p>
+    </div>
+    <div class="grid-3">
+        <div class="benefit-card">
+            <div class="benefit-icon">⚡</div>
+            <div class="benefit-body">
+                <div class="benefit-title">Aprendizaje rápido</div>
+                <div class="benefit-desc">Cursos interactivos y personalizados que se adaptan a tu ritmo y estilo de aprendizaje.</div>
+            </div>
+        </div>
+        <div class="benefit-card">
+            <div class="benefit-icon">💡</div>
+            <div class="benefit-body">
+                <div class="benefit-title">Docentes expertos</div>
+                <div class="benefit-desc">Profesionales con experiencia real que te guían en cada paso del proceso.</div>
+            </div>
+        </div>
+        <div class="benefit-card">
+            <div class="benefit-icon">🛡️</div>
+            <div class="benefit-body">
+                <div class="benefit-title">Seguridad garantizada</div>
+                <div class="benefit-desc">Protegemos todos tus datos, progreso y actividad en la plataforma.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== CURSOS DESTACADOS ===================== -->
+<div class="section">
+    <div class="section-header">
+        <span class="section-label">Destacados</span>
+        <h2 class="section-title">Cursos más populares</h2>
+        <p class="section-sub">Descubre los cursos que están marcando la diferencia.</p>
+    </div>
+    <div class="courses-grid">
+        {% for i in "12345" %}
+        <div class="course-card">
+            <div class="course-thumb">
+                {% if forloop.counter == 1 %}📐
+                {% elif forloop.counter == 2 %}💻
+                {% elif forloop.counter == 3 %}🎨
+                {% elif forloop.counter == 4 %}📊
+                {% else %}🔬
+                {% endif %}
+            </div>
+            <div class="course-body">
+                <span class="course-tag">
+                    {% if forloop.counter == 1 %}Matemáticas
+                    {% elif forloop.counter == 2 %}Programación
+                    {% elif forloop.counter == 3 %}Diseño
+                    {% elif forloop.counter == 4 %}Estadística
+                    {% else %}Ciencias
+                    {% endif %}
+                </span>
+                <div class="course-title">
+                    {% if forloop.counter == 1 %}Cálculo diferencial e integral
+                    {% elif forloop.counter == 2 %}Fundamentos de Python
+                    {% elif forloop.counter == 3 %}Diseño UX/UI moderno
+                    {% elif forloop.counter == 4 %}Análisis de datos con Excel
+                    {% else %}Biología y medio ambiente
+                    {% endif %}
+                </div>
+                <div class="course-rating">
+                    ★★★★★ <span>5.0 · Destacado</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ===================== DOCENTE REQUEST ===================== -->
+<div class="docente-section">
+    <div class="docente-info">
+        <h2 class="d-title">¿Quieres ser docente en Innova?</h2>
+        <p class="d-sub">
+            Comparte tu conocimiento con miles de estudiantes. Completa el formulario y nuestro equipo
+            revisará tu solicitud en menos de 48 horas.
+        </p>
+        <div style="margin-top: 24px; display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.9); font-size:0.9rem;">
+                <span style="background:rgba(255,255,255,0.2); border-radius:50%; width:28px;height:28px; display:flex;align-items:center;justify-content:center; font-size:0.75rem; font-weight:700;">1</span>
+                Llena el formulario con tus datos
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.9); font-size:0.9rem;">
+                <span style="background:rgba(255,255,255,0.2); border-radius:50%; width:28px;height:28px; display:flex;align-items:center;justify-content:center; font-size:0.75rem; font-weight:700;">2</span>
+                Revisamos tu perfil y motivación
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.9); font-size:0.9rem;">
+                <span style="background:rgba(255,255,255,0.2); border-radius:50%; width:28px;height:28px; display:flex;align-items:center;justify-content:center; font-size:0.75rem; font-weight:700;">3</span>
+                ¡Empieza a crear cursos y enseñar!
+            </div>
+        </div>
+    </div>
+    <div class="docente-form">
+        <form method="post" action="{% url 'solicitar_docente_publico' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="nombre">Nombre completo</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" placeholder="tu@correo.com" required>
+            </div>
+            <div class="form-group">
+                <label for="mensaje">¿Por qué quieres ser docente?</label>
+                <textarea id="mensaje" name="mensaje" placeholder="Cuéntanos tu experiencia y motivación..." rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="hoja_vida">Envíanos tu hoja de vida (PDF, Word)</label>
+                <input type="file" id="hoja_vida" name="hoja_vida" accept=".pdf,.doc,.docx" required>
+            </div>
+            <button type="submit" class="btn-submit">Enviar solicitud →</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

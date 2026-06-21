@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="auth-page">
+    <div class="auth-box">
+        <div class="auth-logo">
+            <span>✦ Innova Learning</span>
+        </div>
+        <h2 class="titulo-auth">Crear cuenta</h2>
+
+        {% if error %}
+            <div style="background: #fecaca; color: #b91c1c; padding: 12px; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500; margin-bottom: 20px; border: 1.5px solid #fca5a5; text-align: center;">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Nombre de usuario</label>
+                <input type="text" name="username" placeholder="Ej: juan_perez" required>
+            </div>
+
+            <div class="form-group">
+                <label>Correo electrónico</label>
+                <input type="email" name="email" placeholder="Ej: correo@gmail.com" required>
+                <small style="color: var(--muted); font-size: 0.78rem; display: block; margin-top: 4px;">Ingresa un correo válido.</small>
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" name="password" placeholder="Crea una contraseña" minlength="8" required>
+                <small style="color: var(--muted); font-size: 0.78rem; display: block; margin-top: 4px;">Debe tener al menos 8 caracteres.</small>
+            </div>
+
+            <button type="submit" class="btn-primary-form">Registrarse</button>
+        </form>
+
+        <div style="margin-top: 24px; text-align: center; font-size: 0.9rem;">
+            <a href="/login/" style="color: var(--primary); font-weight: 600; transition: var(--transition);" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+        <div style="margin-top: 12px; text-align: center; font-size: 0.9rem;">
+            <a href="/" style="color: var(--text-sub); font-weight: 500; transition: var(--transition);" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">← Volver al inicio</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

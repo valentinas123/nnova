@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 40px auto 120px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .titulo { font-size: 1.8rem; color: #2c3e50; margin: 0; }
+
+    .btn-volver {
+        text-decoration: none;
+        padding: 8px 16px;
+        background: #6c757d;
+        color: white;
+        border-radius: 6px;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    
+    label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; }
+
+    input, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+    .btn-save {
+        width: 100%;
+        padding: 14px;
+        background: #f39c12; /* Naranja para edición */
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<div class="form-container">
+    <div class="header-flex">
+        <h2 class="titulo">Editar Curso</h2>
+        <a href="{% url 'panel_docente' %}" class="btn-volver">Cancelar</a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Nombre del curso</label>
+            <input type="text" name="nombre" value="{{ curso.nombre }}">
+        </div>
+
+        <div class="form-group">
+            <label>Descripción</label>
+            <textarea name="descripcion">{{ curso.descripcion }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Cambiar imagen (opcional)</label>
+            <input type="file" name="imagen">
+        </div>
+
+        <div class="form-group">
+            <label>Documento/Material del curso (Opcional)</label>
+            <input type="file" name="archivo" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx">
+            {% if curso.archivo %}
+                <small style="display: block; margin-top: 5px; color: #64748b;">
+                    Archivo actual: <a href="{{ curso.archivo.url }}" target="_blank" style="color: #5b4ff5; text-decoration: none; font-weight: 500;"><i class="fas fa-file-alt"></i> Descargar archivo actual</a>
+                </small>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-save">Guardar cambios</button>
+    </form>
+</div>
+{% endblock %}

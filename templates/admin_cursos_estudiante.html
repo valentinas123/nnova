@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Cursos de {{ estudiante.username }}</h2>
+
+<a href="{% url 'lista_usuarios' %}">
+    <button>Volver</button>
+</a>
+
+{% if inscripciones %}
+    {% for ins in inscripciones %}
+        <div class="curso">
+            <p><strong>Curso:</strong> {{ ins.curso.nombre }}</p>
+            <p><strong>Nota:</strong> {{ ins.nota|default:"Sin nota" }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No está inscrito en cursos</p>
+{% endif %}
+
+{% endblock %}

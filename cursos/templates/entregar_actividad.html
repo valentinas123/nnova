@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 60px auto 120px auto;
+        background: var(--bg-card);
+        padding: 40px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+    }
+
+    .form-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0 0 8px 0;
+        letter-spacing: -0.5px;
+    }
+
+    .form-subtitle {
+        color: var(--text-sub);
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+    }
+
+    .info-box {
+        background: var(--primary-light);
+        border-left: 4px solid var(--primary);
+        padding: 16px 20px;
+        margin-bottom: 30px;
+        border-radius: var(--radius-sm);
+    }
+
+    .info-box p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--text);
+        line-height: 1.6;
+    }
+
+    .alert-warning {
+        background: #fff3cd;
+        color: #856404;
+        padding: 15px;
+        border-radius: var(--radius-sm);
+        margin-bottom: 25px;
+        border: 1px solid #ffeeba;
+        font-size: 0.88rem;
+        line-height: 1.5;
+    }
+
+    .form-group-modern {
+        margin-bottom: 24px;
+    }
+
+    .form-group-modern label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: var(--text-sub);
+        font-size: 0.9rem;
+    }
+
+    .input-file-wrapper {
+        border: 2px dashed var(--border);
+        padding: 20px;
+        border-radius: var(--radius-sm);
+        text-align: center;
+        background: var(--bg);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .input-file-wrapper:hover {
+        border-color: var(--primary);
+        background: #fff;
+    }
+
+    .textarea-modern {
+        width: 100%;
+        height: 140px;
+        padding: 14px;
+        border-radius: var(--radius-sm);
+        border: 1.5px solid var(--border);
+        font-size: 0.95rem;
+        font-family: inherit;
+        outline: none;
+        color: var(--text);
+        transition: var(--transition);
+        background: var(--bg);
+    }
+
+    .textarea-modern:focus {
+        border-color: var(--primary);
+        background: #fff;
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .btn-submit-modern {
+        width: 100%;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        font-size: 0.98rem;
+    }
+
+    .btn-submit-modern:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+        opacity: 0.93;
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="form-title">Entregar Actividad</h2>
+    <p class="form-subtitle"><strong>Curso:</strong> {{ actividad.curso.nombre }}</p>
+    
+    <div class="info-box">
+        <p><strong>Actividad:</strong> {{ actividad.titulo }}</p>
+        <p style="margin-top: 8px; font-weight: 400; font-size: 0.9rem; color: var(--text-sub);">
+            {{ actividad.descripcion }}
+        </p>
+    </div>
+
+    {% if entrega %}
+        <div class="alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> Ya has realizado una entrega anteriormente el día <strong>{{ entrega.fecha_envio|date:"d/m/Y a las H:i" }}</strong>. Si vuelves a enviar, la entrega anterior será sobrescrita.
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group-modern">
+            <label>Subir Archivo Adjunto</label>
+            <div class="input-file-wrapper">
+                <input type="file" name="archivo" style="font-size: 0.9rem; cursor: pointer;">
+                {% if entrega.archivo %}
+                    <small style="display: block; margin-top: 8px; color: var(--text-sub);">
+                        Archivo actual: <a href="{{ entrega.archivo.url }}" target="_blank" style="color: var(--primary); font-weight: 600;">{{ entrega.archivo.name }}</a>
+                    </small>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group-modern">
+            <label>Respuesta escrita o comentarios (Opcional)</label>
+            <textarea name="texto_respuesta" class="textarea-modern" placeholder="Escribe aquí tu respuesta, comentarios o enlace a recurso externo...">{% if entrega.texto_respuesta %}{{ entrega.texto_respuesta }}{% endif %}</textarea>
+        </div>
+
+        <button type="submit" class="btn-submit-modern">
+            <i class="fas fa-paper-plane"></i> Enviar Entrega
+        </button>
+    </form>
+    
+    <div style="margin-top: 25px; text-align: center;">
+        <a href="{% url 'detalle_curso' actividad.curso.id %}" style="text-decoration: none; color: var(--text-sub); font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-arrow-left"></i> Cancelar y volver al curso
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 60px auto 120px auto;
+        background: var(--bg-card);
+        padding: 40px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+    }
+
+    .form-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0 0 8px 0;
+        letter-spacing: -0.5px;
+    }
+
+    .meta-box {
+        background: var(--bg-section);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+        margin-bottom: 30px;
+        font-size: 0.95rem;
+        color: var(--text-sub);
+        line-height: 1.6;
+    }
+
+    .meta-box strong {
+        color: var(--text);
+    }
+
+    .form-group-modern {
+        margin-bottom: 24px;
+    }
+
+    .form-group-modern label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: var(--text-sub);
+        font-size: 0.9rem;
+    }
+
+    .input-modern {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: var(--radius-sm);
+        border: 1.5px solid var(--border);
+        font-size: 0.95rem;
+        outline: none;
+        transition: var(--transition);
+        color: var(--text);
+        background: var(--bg);
+    }
+
+    .input-modern:focus {
+        border-color: var(--primary);
+        background: #fff;
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .btn-submit-modern {
+        width: 100%;
+        background: #10b981;
+        color: white;
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        font-size: 0.98rem;
+    }
+
+    .btn-submit-modern:hover {
+        background: #059669;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="form-title">Calificar Estudiante</h2>
+    <p style="color: var(--text-sub); margin-bottom: 25px; font-size: 0.92rem;">Establece la calificación final del estudiante para el curso.</p>
+
+    <div class="meta-box">
+        <strong>Estudiante:</strong> {{ inscripcion.estudiante.username }} ({{ inscripcion.estudiante.email }})<br>
+        <strong>Curso:</strong> {{ inscripcion.curso.nombre }}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group-modern">
+            <label for="nota">Calificación Final (Escala 0.0 a 5.0)</label>
+            <input type="number" id="nota" name="nota" step="0.1" min="0.0" max="5.0" placeholder="Ej: 4.5" required class="input-modern" value="{% if inscripcion.nota is not None %}{{ inscripcion.nota }}{% endif %}">
+        </div>
+
+        <button type="submit" class="btn-submit-modern">
+            <i class="fas fa-save"></i> Guardar Calificación
+        </button>
+    </form>
+
+    {% if error %}
+        <div style="margin-top: 20px; padding: 12px; background: #fee2e2; border: 1px solid #fca5a5; border-radius: var(--radius-sm); color: #b91c1c; font-size: 0.9rem; font-weight: 600;">
+            <i class="fas fa-exclamation-triangle"></i> {{ error }}
+        </div>
+    {% endif %}
+
+    <div style="margin-top: 25px; text-align: center;">
+        <a href="{% url 'ver_inscritos' inscripcion.curso.id %}" style="text-decoration: none; color: var(--text-sub); font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-arrow-left"></i> Cancelar y volver al listado
+        </a>
+    </div>
+</div>
+{% endblock %}

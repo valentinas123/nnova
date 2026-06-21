@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .panel-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px 120px 24px;
+    }
+
+    .titulo {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -1px;
+        margin-bottom: 8px;
+    }
+
+    .subtitulo {
+        color: var(--text-sub);
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
+
+    /* Stats strip */
+    .stats-strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card-modern {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-card-modern::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; bottom: 0;
+        width: 4px;
+        background: var(--primary);
+    }
+
+    .stat-card-modern.purple::before { background: var(--accent); }
+    .stat-card-modern.green::before { background: #10b981; }
+    .stat-card-modern.amber::before { background: #f59e0b; }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: var(--radius-sm);
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+    }
+
+    .stat-card-modern.purple .stat-icon { background: var(--accent-light); color: var(--accent); }
+    .stat-card-modern.green .stat-icon { background: #ecfdf5; color: #10b981; }
+    .stat-card-modern.amber .stat-icon { background: #fff3cd; color: #d97706; }
+
+    .stat-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-num {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text);
+        line-height: 1.1;
+    }
+
+    .stat-txt {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 4px;
+    }
+
+    /* Pending grades section */
+    .pending-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 30px;
+        margin-bottom: 40px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .section-title-modern {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0 0 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .pending-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .pending-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px 20px;
+        transition: var(--transition);
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .pending-item:hover {
+        border-color: var(--primary);
+        background: #fff;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .pending-meta {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pending-title {
+        font-weight: 700;
+        color: var(--text);
+        font-size: 0.98rem;
+    }
+
+    .pending-sub {
+        font-size: 0.82rem;
+        color: var(--text-sub);
+        margin-top: 3px;
+    }
+
+    .pending-sub strong {
+        color: var(--primary);
+    }
+
+    /* Actions */
+    .acciones {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+    }
+
+    /* Grid de Cursos */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 30px;
+    }
+
+    .curso {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .curso:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .img-curso {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .img-curso-fallback {
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .curso-contenido {
+        padding: 24px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .curso-contenido h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.3;
+    }
+
+    .curso-contenido p {
+        color: var(--text-sub);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .curso-stats {
+        padding: 0 24px 20px 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .badge-modern {
+        padding: 5px 12px;
+        border-radius: var(--radius-sm);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .badge-students {
+        color: var(--primary);
+        background: var(--primary-light);
+        border: 1px solid var(--border);
+    }
+    
+    .badge-grade {
+        color: #10b981;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+    }
+
+    /* Botones de la tarjeta */
+    .curso-botones {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 18px 24px 24px 24px;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border);
+    }
+
+    .curso-botones a {
+        text-decoration: none;
+    }
+
+    .curso-botones button {
+        width: 100%;
+        padding: 10px 8px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--text-sub);
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .curso-botones button:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .curso-botones .btn-delete-modern {
+        color: #ef4444;
+        border: 1px solid #fee2e2;
+        background: #fff;
+    }
+
+    .curso-botones .btn-delete-modern:hover {
+        background: #fee2e2;
+        color: #dc2626;
+        border-color: #fca5a5;
+    }
+</style>
+
+<div class="panel-container">
+    <h2 class="titulo">Panel Docente</h2>
+    <p class="subtitulo">Administra tus cursos, interactúa con alumnos y evalúa las tareas entregadas.</p>
+
+    <!-- Stats summary strip -->
+    <div class="stats-strip">
+        <div class="stat-card-modern">
+            <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+            <div class="stat-details">
+                <span class="stat-num">{{ total_cursos }}</span>
+                <span class="stat-txt">Cursos Activos</span>
+            </div>
+        </div>
+
+        <div class="stat-card-modern purple">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-details">
+                <span class="stat-num">{{ total_estudiantes_global }}</span>
+                <span class="stat-txt">Alumnos Totales</span>
+            </div>
+        </div>
+
+        <div class="stat-card-modern green">
+            <div class="stat-icon"><i class="fas fa-star"></i></div>
+            <div class="stat-details">
+                <span class="stat-num">{% if promedio_global %}{{ promedio_global }}{% else %}N/A{% endif %}</span>
+                <span class="stat-txt">Promedio General</span>
+            </div>
+        </div>
+
+        <div class="stat-card-modern amber">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-details">
+                <span class="stat-num">{{ entregas_pendientes.count }}</span>
+                <span class="stat-txt">Por Calificar</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Bar -->
+    <div class="acciones">
+        <a href="{% url 'crear_curso' %}" style="text-decoration:none;">
+            <button class="btn btn-purple" style="border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-plus"></i> Crear Nuevo Curso
+            </button>
+        </a>
+        <a href="{% url 'pdf_general' %}" style="text-decoration:none;">
+            <button class="btn-secondary-header" style="cursor: pointer;">
+                <i class="fas fa-file-pdf"></i> Descargar Reporte PDF
+            </button>
+        </a>
+    </div>
+
+    <!-- Pending deliveries list -->
+    {% if entregas_pendientes %}
+        <div class="pending-section">
+            <h3 class="section-title-modern">
+                <i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i>
+                Entregas Pendientes de Calificación
+            </h3>
+            <div class="pending-list">
+                {% for entrega in entregas_pendientes|slice:":5" %}
+                    <div class="pending-item">
+                        <div class="pending-meta">
+                            <span class="pending-title">{{ entrega.actividad.titulo }}</span>
+                            <span class="pending-sub">
+                                Enviado por <strong>{{ entrega.estudiante.username }}</strong> para el curso <strong>{{ entrega.actividad.curso.nombre }}</strong>
+                            </span>
+                        </div>
+                        <a href="{% url 'calificar_entrega' entrega.id %}" style="text-decoration: none;">
+                            <button class="btn-act btn-act-primary" style="font-size: 0.8rem; padding: 6px 14px;">
+                                <i class="fas fa-marker"></i> Calificar
+                            </button>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Courses Grid -->
+    <h3 class="section-title-modern" style="margin-bottom: 25px;">
+        <i class="fas fa-graduation-cap" style="color: var(--primary);"></i>
+        Tus Cursos Asignados
+    </h3>
+    
+    <div class="grid">
+    {% for curso in cursos %}
+        <div class="curso">
+            {% if curso.imagen %}
+                <img src="{{ curso.imagen.url }}" class="img-curso">
+            {% else %}
+                <div class="img-curso-fallback">
+                    {% if forloop.counter == 1 %}📐
+                    {% elif forloop.counter == 2 %}💻
+                    {% elif forloop.counter == 3 %}🎨
+                    {% else %}📚
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="curso-contenido">
+                <h3>
+                    <a href="{% url 'detalle_curso' curso.id %}" style="color: inherit; text-decoration: none;">
+                        {{ curso.nombre }}
+                    </a>
+                </h3>
+                <p>{{ curso.descripcion|truncatechars:90 }}</p>
+            </div>
+
+            <div class="curso-stats">
+                <span class="badge-modern badge-students">
+                    <i class="fas fa-users"></i> Alumnos: {{ curso.total_estudiantes }}
+                </span>
+                <span class="badge-modern badge-grade">
+                    <i class="fas fa-star"></i> Promedio: {% if curso.promedio %}{{ curso.promedio|floatformat:1 }}{% else %}N/A{% endif %}
+                </span>
+            </div>
+
+            <div class="curso-botones">
+                <a href="{% url 'ver_inscritos' curso.id %}">
+                    <button><i class="fas fa-user-graduate"></i> Alumnos</button>
+                </a>
+                <a href="{% url 'detalle_curso' curso.id %}">
+                    <button><i class="fas fa-tasks"></i> Actividades</button>
+                </a>
+                <a href="{% url 'editar_curso' curso.id %}">
+                    <button><i class="fas fa-edit"></i> Editar</button>
+                </a>
+                <a href="{% url 'eliminar_curso' curso.id %}">
+                    <button class="btn-delete-modern"><i class="fas fa-trash"></i> Eliminar</button>
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 48px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border); color: var(--text-sub);">
+            <i class="fas fa-book-open" style="font-size: 3rem; color: var(--border); margin-bottom: 16px; display: block;"></i>
+            <p style="font-weight: 600; font-size: 1.1rem; margin: 0;">No tienes cursos asignados.</p>
+            <p style="font-size: 0.88rem; color: var(--muted); margin: 4px 0 0 0;">Haz clic en "Crear Nuevo Curso" para empezar a enseñar.</p>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

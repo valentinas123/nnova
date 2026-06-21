@@ -1,0 +1,483 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px 120px 24px;
+    }
+
+    .titulo-seccion {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -1px;
+        margin: 0;
+    }
+
+    .sub-seccion {
+        color: var(--text-sub);
+        font-size: 0.95rem;
+        margin-top: 4px;
+    }
+
+    .header-panel {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        border-bottom: 1.5px solid var(--border);
+        padding-bottom: 20px;
+        margin-bottom: 35px;
+    }
+
+    /* Premium Button */
+    .btn-primary-admin {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        border: none;
+        transition: var(--transition);
+        text-decoration: none;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #fff;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary-admin:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        opacity: 0.93;
+    }
+
+    /* Grid of Administrative Sections */
+    .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .admin-card-premium {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .admin-card-premium:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary);
+    }
+
+    .admin-card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .admin-card-premium.emerald::before { background: linear-gradient(90deg, #10b981, #34d399); }
+    .admin-card-premium.amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .admin-card-premium h3 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0 0 12px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .admin-card-premium p {
+        font-size: 0.92rem;
+        color: var(--text-sub);
+        line-height: 1.6;
+        margin: 0 0 24px 0;
+        flex-grow: 1;
+    }
+
+    /* Stats Box */
+    .admin-stats-strip {
+        background: var(--bg-section);
+        border-radius: var(--radius-md);
+        padding: 14px 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+        align-items: center;
+    }
+
+    .stat-badge-item {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-sub);
+    }
+
+    .stat-badge-item strong {
+        color: var(--primary);
+        font-size: 0.95rem;
+    }
+
+    /* Actions */
+    .btn-admin-action {
+        width: 100%;
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        border: none;
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-admin-action:hover {
+        background: var(--primary);
+        color: #fff;
+    }
+
+    .report-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-report {
+        width: 100%;
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        border: none;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-report-sky { background: #0ea5e9; }
+    .btn-report-sky:hover { background: #0284c7; transform: translateY(-1px); }
+
+    .btn-report-indigo { background: #6366f1; }
+    .btn-report-indigo:hover { background: #4f46e5; transform: translateY(-1px); }
+
+    .btn-report-amber { background: #f59e0b; }
+    .btn-report-amber:hover { background: #d97706; transform: translateY(-1px); }
+
+    /* Charts Layout */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .chart-card-premium {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+    }
+
+    .chart-card-premium:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-light);
+    }
+
+    .chart-card-premium h4 {
+        margin: 0 0 24px 0;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--text);
+        border-left: 4px solid var(--primary);
+        padding-left: 12px;
+    }
+
+    .chart-canvas-wrapper {
+        min-height: 260px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
+<div class="admin-container">
+    <div class="header-panel">
+        <div>
+            <h2 class="titulo-seccion">Panel de Administración</h2>
+            <p class="sub-seccion">Consola centralizada de supervisión de Nnova Learning.</p>
+        </div>
+        <a href="{% url 'carga_masiva_usuarios' %}" style="text-decoration:none;">
+            <button class="btn-primary-admin">
+                <i class="fas fa-file-upload"></i> Carga Masiva de Usuarios
+            </button>
+        </a>
+    </div>
+
+    <div class="admin-grid">
+        <!-- SECCIÓN USUARIOS -->
+        <div class="admin-card-premium">
+            <h3><i class="fas fa-users-cog" style="color: #3b82f6;"></i> Usuarios</h3>
+            <p>Control de cuentas registradas, asignación de roles de docentes y estudiantes en la plataforma.</p>
+            
+            <div class="admin-stats-strip">
+                <span class="stat-badge-item">Estudiantes: <strong>{{ total_estudiantes }}</strong></span>
+                <span style="color: var(--border); font-weight: 300;">|</span>
+                <span class="stat-badge-item">Docentes: <strong>{{ total_docentes }}</strong></span>
+                <span style="color: var(--border); font-weight: 300;">|</span>
+                <span class="stat-badge-item">Admins: <strong>{{ total_admins }}</strong></span>
+            </div>
+
+            <div>
+                <a href="{% url 'lista_usuarios' %}" style="text-decoration: none;">
+                    <button class="btn-admin-action">
+                        <i class="fas fa-user-shield"></i> Gestionar Cuentas
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        <!-- SECCIÓN CURSOS -->
+        <div class="admin-card-premium emerald">
+            <h3><i class="fas fa-graduation-cap" style="color: #10b981;"></i> Oferta Académica</h3>
+            <p>Monitoreo y creación de cursos, configuración de materias y asignación múltiple de docentes.</p>
+            
+            <div class="admin-stats-strip">
+                <span class="stat-badge-item">Cursos Creados: <strong>{{ total_cursos }}</strong></span>
+                <span style="color: var(--border); font-weight: 300;">|</span>
+                <span class="stat-badge-item">Inscripciones: <strong>{{ total_inscripciones }}</strong></span>
+            </div>
+
+            <div>
+                <a href="{% url 'admin_cursos' %}" style="text-decoration: none;">
+                    <button class="btn-admin-action" style="background: #e6fbf2; color: #10b981;">
+                        <i class="fas fa-folder-open"></i> Administrar Cursos
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        <!-- SECCIÓN REPORTES -->
+        <div class="admin-card-premium amber">
+            <h3><i class="fas fa-chart-pie" style="color: #f59e0b;"></i> Reportes PDF</h3>
+            <p>Generación de reportes institucionales, exportación de datos globales e informes detallados.</p>
+            
+            <div class="report-buttons">
+                <a href="{% url 'pdf_usuarios' %}" style="text-decoration: none;">
+                    <button class="btn-report btn-report-sky">
+                        <i class="fas fa-users"></i> Reporte PDF Usuarios
+                    </button>
+                </a>
+                <a href="{% url 'pdf_cursos_admin' %}" style="text-decoration: none;">
+                    <button class="btn-report btn-report-indigo">
+                        <i class="fas fa-book-reader"></i> Reporte PDF Cursos
+                    </button>
+                </a>
+                <a href="{% url 'pdf_general_admin' %}" style="text-decoration: none;">
+                    <button class="btn-report btn-report-amber">
+                        <i class="fas fa-globe"></i> Reporte PDF General
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE GRÁFICAS -->
+    <h3 class="titulo-seccion" style="font-size: 1.6rem; border-bottom: 1.5px solid var(--border); padding-bottom: 10px; margin-bottom: 30px;">
+        <i class="fas fa-chart-bar" style="color: var(--primary);"></i>
+        Estadísticas Visuales
+    </h3>
+
+    <div class="charts-grid">
+        <!-- 1. Estudiantes por curso -->
+        <div class="chart-card-premium">
+            <h4>Cantidad de Estudiantes por Curso</h4>
+            <div class="chart-canvas-wrapper">
+                <canvas id="grafica1"></canvas>
+            </div>
+        </div>
+
+        <!-- 2. Promedio por curso -->
+        <div class="chart-card-premium">
+            <h4>Promedio de Calificaciones por Curso</h4>
+            <div class="chart-canvas-wrapper">
+                <canvas id="grafica2"></canvas>
+            </div>
+        </div>
+
+        <!-- 3. Usuarios por rol -->
+        <div class="chart-card-premium">
+            <h4>Distribución de Usuarios por Rol</h4>
+            <div class="chart-canvas-wrapper" style="max-height: 250px;">
+                <canvas id="grafica3"></canvas>
+            </div>
+        </div>
+
+        <!-- 4. Resumen general -->
+        <div class="chart-card-premium">
+            <h4>Resumen de Entidades del Sistema</h4>
+            <div class="chart-canvas-wrapper" style="max-height: 250px;">
+                <canvas id="grafica4"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Datos desde Django
+    const nombres = {{ nombres|safe }};
+    const cantidades = {{ cantidades|safe }};
+    const promedios = {{ promedios|safe }};
+
+    // 1. Estudiantes por curso (Barras premium)
+    new Chart(document.getElementById('grafica1'), {
+        type: 'bar',
+        data: {
+            labels: nombres,
+            datasets: [{
+                label: 'Estudiantes',
+                data: cantidades,
+                backgroundColor: 'rgba(91, 79, 245, 0.75)',
+                borderColor: '#5b4ff5',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: '#4338ca'
+            }]
+        },
+        options: { 
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    grid: { color: '#f1f1f9' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+
+    // 2. Promedio por curso (Línea premium)
+    new Chart(document.getElementById('grafica2'), {
+        type: 'line',
+        data: {
+            labels: nombres,
+            datasets: [{
+                label: 'Promedio',
+                data: promedios,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 3,
+                pointBackgroundColor: '#10b981',
+                pointRadius: 4
+            }]
+        },
+        options: { 
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { 
+                    min: 0, 
+                    max: 5,
+                    grid: { color: '#f1f1f9' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+
+    // 3. Usuarios por rol (Pastel premium)
+    new Chart(document.getElementById('grafica3'), {
+        type: 'pie',
+        data: {
+            labels: ['Estudiantes', 'Docentes', 'Admins'],
+            datasets: [{
+                data: [{{ total_estudiantes }}, {{ total_docentes }}, {{ total_admins }}],
+                backgroundColor: ['#5b4ff5', '#8b5cf6', '#f59e0b'],
+                borderWidth: 3,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // 4. Resumen general (Dona premium)
+    new Chart(document.getElementById('grafica4'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Cursos', 'Inscripciones'],
+            datasets: [{
+                data: [{{ total_cursos }}, {{ total_inscripciones }}],
+                backgroundColor: ['#10b981', '#ec4899'],
+                borderWidth: 3,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

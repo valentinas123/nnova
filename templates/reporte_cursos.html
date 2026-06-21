@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="contenedor" style="width: 95%; margin: 30px auto;">
+    <h2 style="color: #1e293b; margin-bottom: 20px;">Consulta Avanzada y Reporte de Cursos</h2>
+    
+    <!-- Card de Filtros -->
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <form method="GET" action="{% url 'reporte_cursos' %}">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: end;">
+                
+                <!-- Filtro Curso -->
+                <div>
+                    <label for="curso" style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569; font-size: 0.9rem;">Curso</label>
+                    <select name="curso" id="curso" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px;">
+                        <option value="">-- Todos los Cursos --</option>
+                        {% for c in cursos_list %}
+                            <option value="{{ c.id }}" {% if curso_id == c.id|stringformat:"i" %}selected{% endif %}>{{ c.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Filtro Docente (Solo visible para Admin) -->
+                {% if request.user.rol == 'admin' %}
+                <div>
+                    <label for="docente" style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569; font-size: 0.9rem;">Docente</label>
+                    <select name="docente" id="docente" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px;">
+                        <option value="">-- Todos los Docentes --</option>
+                        {% for d in docentes %}
+                            <option value="{{ d.id }}" {% if docente_id == d.id|stringformat:"i" %}selected{% endif %}>{{ d.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <!-- Filtro Estado de Calificación -->
+                <div>
+                    <label for="estado" style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569; font-size: 0.9rem;">Estado de Calificación</label>
+                    <select name="estado" id="estado" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px;">
+                        <option value="">-- Todos --</option>
+                        <option value="aprobado" {% if estado == 'aprobado' %}selected{% endif %}>Aprobados (>= 3.0)</option>
+                        <option value="reprobado" {% if estado == 'reprobado' %}selected{% endif %}>Reprobados (< 3.0)</option>
+                        <option value="pendiente" {% if estado == 'pendiente' %}selected{% endif %}>Pendiente de Calificar</option>
+                    </select>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="submit" style="flex: 1; min-width: 100px; padding: 10px 15px; background: #2563eb; color: white; font-weight: 600; border-radius: 8px; font-size: 13px;">Filtrar</button>
+                    <button type="submit" name="exportar_pdf" value="1" style="flex: 1; min-width: 110px; padding: 10px 15px; background: #dc2626; color: white; font-weight: 600; border-radius: 8px; font-size: 13px;">Exportar PDF</button>
+                    <a href="{% url 'reporte_cursos' %}" style="flex: 1; min-width: 80px; text-decoration: none;">
+                        <button type="button" style="width: 100%; padding: 10px 15px; background: #64748b; color: white; font-weight: 600; border-radius: 8px; font-size: 13px;">Limpiar</button>
+                    </a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- Resultados -->
+    <h3 style="color: #334155; margin-bottom: 15px;">Resultados de Búsqueda ({{ resultados.count }} registros encontrados)</h3>
+    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+        <thead style="background: #1e293b; color: white;">
+            <tr>
+                <th style="padding: 15px; text-align: left;">Curso</th>
+                <th style="padding: 15px; text-align: left;">Estudiante</th>
+                <th style="padding: 15px; text-align: left;">Docente</th>
+                <th style="padding: 15px; text-align: center;">Nota Promedio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ins in resultados %}
+            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                <td style="padding: 15px; text-align: left; font-weight: 600; color: #334155;">{{ ins.curso.nombre }}</td>
+                <td style="padding: 15px; text-align: left; color: #475569;">{{ ins.estudiante.username }} ({{ ins.estudiante.email }})</td>
+                <td style="padding: 15px; text-align: left; color: #475569;">{{ ins.curso.docente.username }}</td>
+                <td style="padding: 15px; text-align: center;">
+                    {% if ins.nota is not None %}
+                        <span class="badge" style="{% if ins.nota >= 3.0 %}background: #d1fae5; color: #065f46;{% else %}background: #fee2e2; color: #991b1b;{% endif %} font-weight: bold; font-size: 12px; padding: 6px 12px; border-radius: 12px;">
+                            {{ ins.nota }}
+                        </span>
+                    {% else %}
+                        <span class="badge" style="background: #fef3c7; color: #92400e; font-weight: bold; font-size: 12px; padding: 6px 12px; border-radius: 12px;">
+                            Pendiente
+                        </span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="padding: 30px; text-align: center; color: #94a3b8; font-style: italic;">No se encontraron registros de inscripciones que coincidan con los filtros seleccionados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

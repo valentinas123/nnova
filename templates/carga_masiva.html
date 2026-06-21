@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="contenedor" style="max-width: 500px; margin: auto;">
+    <h2 style="text-align:center;">Carga Masiva de Usuarios</h2>
+
+    <a href="{% url 'panel_admin' %}" style="text-decoration: none; display: flex;">
+            <button style="background: #64748b; margin: 0; padding: 10px 20px;">Volver al Panel</button>
+        </a>
+        
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <input type="file" name="archivo" accept=".csv" required style="margin: 20px 0;">
+
+        <button type="submit" class="btn-principal" style="width: 100%;">
+            Subir archivo
+        </button>
+    </form>
+
+    <p style="margin-top: 15px; font-size: 14px; color: #64748b;">
+        Formato: username, email, rol, password
+    </p>
+</div>
+{% endblock %}

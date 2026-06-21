@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Editar usuario</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <input type="text" name="username" value="{{ usuario.username }}" required>
+    <input type="email" name="email" value="{{ usuario.email }}" required>
+
+    <select name="rol">
+        <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Admin</option>
+        <option value="docente" {% if usuario.rol == 'docente' %}selected{% endif %}>Docente</option>
+        <option value="estudiante" {% if usuario.rol == 'estudiante' %}selected{% endif %}>Estudiante</option>
+    </select>
+
+    <input type="password" name="password" placeholder="Nueva contraseña (opcional)">
+
+    <button>Guardar cambios</button>
+</form>
+
+{% endblock %}

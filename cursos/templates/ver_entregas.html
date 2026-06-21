@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="contenedor">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h2 style="margin: 0; color: #1e293b;">Entregas Recibidas</h2>
+            <p style="color: #64748b; margin: 5px 0 0 0;"><strong>Actividad:</strong> {{ actividad.titulo }} | <strong>Curso:</strong> {{ actividad.curso.nombre }}</p>
+        </div>
+        <a href="{% url 'detalle_curso' actividad.curso.id %}" style="text-decoration: none;">
+            <button style="background: #64748b;">Volver al curso</button>
+        </a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+        <thead style="background: #1e293b; color: white;">
+            <tr>
+                <th style="padding: 15px; text-align: left;">Estudiante</th>
+                <th style="padding: 15px; text-align: center;">Fecha de Envío</th>
+                <th style="padding: 15px; text-align: center;">Archivo Adjunto</th>
+                <th style="padding: 15px; text-align: center;">Estado</th>
+                <th style="padding: 15px; text-align: center;">Nota</th>
+                <th style="padding: 15px; text-align: center;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entrega in entregas %}
+            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                <td style="padding: 15px; text-align: left; font-weight: 500; color: #334155;">{{ entrega.estudiante.username }}</td>
+                <td style="padding: 15px; text-align: center; color: #64748b;">{{ entrega.fecha_envio|date:"d/m/Y H:i" }}</td>
+                <td style="padding: 15px; text-align: center;">
+                    {% if entrega.archivo %}
+                        <a href="{{ entrega.archivo.url }}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600;">
+                            Descargar Archivo
+                        </a>
+                    {% else %}
+                        <span style="color: #94a3b8; font-style: italic;">Sin archivo</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 15px; text-align: center;">
+                    {% if entrega.estado == 'calificado' %}
+                        <span class="badge" style="background: #d1fae5; color: #065f46; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600;">Calificado</span>
+                    {% else %}
+                        <span class="badge" style="background: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600;">Pendiente</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 15px; text-align: center; font-weight: bold; color: #1e293b;">
+                    {% if entrega.nota is not None %}
+                        {{ entrega.nota }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td style="padding: 15px; text-align: center;">
+                    <a href="{% url 'calificar_entrega' entrega.id %}" style="text-decoration: none;">
+                        <button style="padding: 6px 12px; font-size: 12px; background: #2563eb;">Calificar</button>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="padding: 30px; text-align: center; color: #94a3b8; font-style: italic;">No se han recibido entregas para esta actividad todavía.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
