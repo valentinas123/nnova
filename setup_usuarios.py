@@ -4,6 +4,7 @@ Se ejecuta automáticamente en el Procfile de Railway.
 Es idempotente: no duplica usuarios, solo los crea si no existen o actualiza sus datos.
 """
 import os
+import sys
 import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nnova.settings')
@@ -11,6 +12,8 @@ django.setup()
 
 from usuarios.models import Usuario
 
+# Definir usuarios base del sistema
+# IMPORTANTE: Cada dict se consume una sola vez, no mutar
 USUARIOS = [
     {
         'username': 'admin',
@@ -65,18 +68,34 @@ USUARIOS = [
 ]
 
 print("[setup_usuarios] Verificando usuarios del sistema...")
+print(f"[setup_usuarios] Base de datos: {django.conf.settings.DATABASES['default']['ENGINE']}")
 
-for data in USUARIOS:
+for user_data in USUARIOS:
+    # Copiar el dict para no mutar el original
+    data = dict(user_data)
     password = data.pop('password')
     username = data['username']
 
-    usuario, created = Usuario.objects.get_or_create(username=username)
-    for campo, valor in data.items():
-        setattr(usuario, campo, valor)
-    usuario.set_password(password)
-    usuario.save()
+    try:
+        usuario, created = Usuario.objects.get_or_create(
+            username=username,
+            defaults=data
+        )
 
-    accion = "CREADO" if created else "OK"
-    print(f"  [{accion}] {username} | rol={usuario.rol}")
+        if created:
+            # Usuario recién creado: establecer contraseña hasheada
+            usuario.set_password(password)
+            usuario.save()
+            print(f"  [CREADO] {username} | rol={usuario.rol}")
+        else:
+            # Usuario ya existía: actualizar campos y contraseña
+            for campo, valor in data.items():
+                setattr(usuario, campo, valor)
+            usuario.set_password(password)
+            usuario.save()
+            print(f"  [OK] {username} | rol={usuario.rol}")
+
+    except Exception as e:
+        print(f"  [ERROR] {username}: {e}", file=sys.stderr)
 
 print("[setup_usuarios] Listo.")

@@ -24,17 +24,23 @@ def login_usuario(request):
         password = request.POST.get('password')
 
         user = None
+
+        # Si el usuario ingresó un correo, buscar el username correspondiente
         if '@' in username:
             try:
                 user_obj = Usuario.objects.get(email=username)
-                if user_obj.check_password(password):
-                    user = user_obj
+                # Autenticar con el username real del usuario encontrado por email
+                user = authenticate(request, username=user_obj.username, password=password)
             except Usuario.DoesNotExist:
                 user = None
         else:
             user = authenticate(request, username=username, password=password)
 
         if user is not None:
+            if not user.is_active:
+                return render(request, 'login.html', {
+                    'error': 'Tu cuenta está desactivada. Contacta al administrador.'
+                })
             login(request, user)
             if user.rol == 'admin':
                 return redirect('panel_admin')
