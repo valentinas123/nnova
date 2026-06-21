@@ -13,8 +13,6 @@ DEBUG = False
 # 🔵 PRODUCCIÓN (Railway)
 ALLOWED_HOSTS = [
     "web-production-41465.up.railway.app",
-    "localhost",
-    "127.0.0.1"
 ]
 
 INSTALLED_APPS = [
@@ -59,7 +57,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'nnova.wsgi.application'
 
 
-# 🟡 BASE DE DATOS (SQLite en Railway - simple)
+# 🟡 BASE DE DATOS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -109,7 +107,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 
-# 🟢 EMAIL (GMAIL SMTP)
+# 🟢 EMAIL
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -118,7 +116,7 @@ EMAIL_HOST_USER = 'valentina10solano@gmail.com'
 EMAIL_HOST_PASSWORD = 'dzlomnwbjullvmpw'
 
 
-# 🔵 CSRF RAILWAY (IMPORTANTE)
+# 🔵 CSRF RAILWAY (CORREGIDO)
 CSRF_TRUSTED_ORIGINS = [
     "https://web-production-41465.up.railway.app"
 ]
